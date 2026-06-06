@@ -1,10 +1,12 @@
 Attribution and provenance
 
 This project includes adapted material from:
-- https://github.com/brenhinkeller/preprint-template.tex
+
+- <https://github.com/brenhinkeller/preprint-template.tex>
 
 Upstream project notes that it is itself forked and modified from:
-- https://github.com/kourgeorge/arxiv-style
+
+- <https://github.com/kourgeorge/arxiv-style>
 
 Changes in this repository include pandoc-focused templating, Lua filters,
 containerization, and workflow/documentation adjustments for reproducible
