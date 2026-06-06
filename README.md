@@ -18,6 +18,13 @@ docker run --rm -v "$PWD":/work panpreposterous \
   panpreposterous manuscript.md --bibliography references.bib --csl journal.csl -o manuscript.pdf
 ```
 
+## End-User Guide
+
+For a scientist-friendly, step-by-step workflow (planning, folder setup,
+build commands, and troubleshooting), see:
+
+- [How to Produce a Preprint/Postprint PDF](docs/how-to-produce-preprint-postprint-pdf.md)
+
 ### Template/YAML knobs (partial)
 
 - `twocolumn: true`
