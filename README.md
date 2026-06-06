@@ -24,6 +24,7 @@ For a scientist-friendly, step-by-step workflow (planning, folder setup,
 build commands, and troubleshooting), see:
 
 - [How to Produce a Preprint/Postprint PDF](docs/how-to-produce-preprint-postprint-pdf.md)
+- [Tutorial: Produce a Complete Preprint/Postprint PDF](docs/tutorial-produce-complete-preprint-postprint-pdf.md)
 
 ### Template/YAML knobs (partial)
 
