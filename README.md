@@ -48,3 +48,18 @@ The filter will:
 - Generate lists of Figures/Tables
 - Force one item per page in the supplement
 - Number S1, S2, …
+
+## License and Attribution
+
+This repository is licensed under Creative Commons Attribution 4.0
+International (CC BY 4.0). See the LICENSE file for details.
+
+This project is adapted from:
+
+- https://github.com/brenhinkeller/preprint-template.tex
+
+The upstream source notes that it was forked and modified from:
+
+- https://github.com/kourgeorge/arxiv-style
+
+Further attribution and provenance notes are in the NOTICE file.
