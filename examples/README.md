@@ -1,9 +1,9 @@
-## Bundled Example Manuscript
+# Bundled Example Manuscript
 
 This folder contains a complete, runnable example that matches the tutorial and
 how-to workflow.
 
-### Contents
+## Contents
 
 - `manuscript.md`: main text with references, backmatter, and supplementary
   blocks
@@ -15,7 +15,7 @@ how-to workflow.
 Note: `manuscript.md` references `figs/s1.png` in the supplementary block.
 Add that file before rendering if it is not present.
 
-### Build from this folder
+## Build from this folder
 
 From repository root:
 

@@ -47,14 +47,18 @@ Results text.
 Discussion text.
 
 # References {-}
+
 ::: {#refs}
 :::
 
 ::: backmatter
+
 ## Acknowledgements {-}
+
 We thank collaborators.
 
 ## Author contributions {-}
+
 FA designed and wrote the study.
 :::
 
@@ -66,7 +70,7 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolor
 ![Supplementary figure legend.](figs/s1.png){#fig:s1 width=0.9\\columnwidth}
 
 | Group | n | Mean | SD |
-|---|---:|---:|---:|
+| --- | ---: | ---: | ---: |
 | Control | 12 | 1.03 | 0.11 |
 | Treatment A | 12 | 1.27 | 0.14 |
 | Treatment B | 12 | 1.41 | 0.18 |
