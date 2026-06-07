@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="540" viewBox="0 0 900 540" role="img" aria-labelledby="title desc">
+  <title id="title">Example Figure 1</title>
+  <desc id="desc">A simple line chart placeholder used by the bundled manuscript example.</desc>
+  <rect width="900" height="540" fill="#ffffff" />
+  <line x1="90" y1="450" x2="840" y2="450" stroke="#1f2937" stroke-width="3" />
+  <line x1="90" y1="450" x2="90" y2="90" stroke="#1f2937" stroke-width="3" />
+  <polyline fill="none" stroke="#2563eb" stroke-width="6" points="120,420 240,360 360,330 480,250 600,210 720,170 810,140" />
+  <text x="450" y="505" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="24" fill="#111827">Example Time</text>
+  <text x="35" y="280" text-anchor="middle" transform="rotate(-90 35 280)" font-family="Helvetica, Arial, sans-serif" font-size="24" fill="#111827">Example Response</text>
+</svg>
