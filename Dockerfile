@@ -14,7 +14,7 @@ ENV LANG=C.UTF-8
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl xz-utils wget perl fontconfig libfontconfig1 \
-    make git pandoc \
+    make git pandoc librsvg2-bin \
  && rm -rf /var/lib/apt/lists/*
 
 # Install TinyTeX and expose its binaries via stable symlinks in /usr/local/bin.
