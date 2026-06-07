@@ -45,39 +45,51 @@ submission portal, or manuscript tracking system. It expects organized input fil
 
 Before you start, you need:
 
-- Docker Desktop installed and running.
-- This repository cloned or downloaded.
+- Docker installed and running.
+- This repository cloned or downloaded if you want to use the bundled example or build the image locally.
 - One manuscript folder containing at least:
   - `manuscript.md`
   - `references.bib`
   - `journal.csl`
   - any figures, tables, or supplementary files referenced by the manuscript
 
-## Build the Container Image
+Docker Desktop is one common way to install Docker on macOS and Windows. On Linux, a standard Docker Engine installation is sufficient.
 
-From the Panpreposterous repository root, build the image once:
+## Get the Container Image
+
+The container image is published on Docker Hub:
+
+- <https://hub.docker.com/r/costantinicarlo/panpreposterous>
+
+To use the published image, pull it once:
+
+```bash
+docker pull costantinicarlo/panpreposterous:latest
+```
+
+You can also build the image locally from the Panpreposterous repository root:
 
 ```bash
 docker build -t panpreposterous -f Dockerfile .
 ```
 
-After that, you can use the same local image to build any manuscript folder.
+Use the Docker Hub image for ordinary manuscript builds. Build locally when you are developing Panpreposterous, testing local template/filter changes, or working without access to the registry. If you build locally with the command above, replace `costantinicarlo/panpreposterous:latest` with `panpreposterous` in the `docker run` commands below.
 
 ## Try the Bundled Example
 
 The fastest way to see the application work is to render the included example.
 
-If you have not built the image yet, build it from the repository root:
+From the repository root, pull the published image:
 
 ```bash
-docker build -t panpreposterous -f Dockerfile .
+docker pull costantinicarlo/panpreposterous:latest
 ```
 
 Then run the example from the `examples/` folder:
 
 ```bash
 cd examples
-docker run --rm -v "$PWD":/work panpreposterous \
+docker run --rm -v "$PWD":/work costantinicarlo/panpreposterous:latest \
   panpreposterous manuscript.md --bibliography references.bib --csl journal.csl -o manuscript-preprint.pdf
 ```
 
@@ -91,7 +103,7 @@ To render a postprint, change `doc_version: "Preprint"` to
 `doc_version: "Postprint"` in `examples/manuscript.md`, then run the same command with a different output name:
 
 ```bash
-docker run --rm -v "$PWD":/work panpreposterous \
+docker run --rm -v "$PWD":/work costantinicarlo/panpreposterous:latest \
   panpreposterous manuscript.md --bibliography references.bib --csl journal.csl -o manuscript-postprint.pdf
 ```
 
@@ -100,7 +112,7 @@ docker run --rm -v "$PWD":/work panpreposterous \
 Open a terminal in the folder that contains your manuscript inputs.
 
 ```bash
-docker run --rm -v "$PWD":/work panpreposterous \
+docker run --rm -v "$PWD":/work costantinicarlo/panpreposterous:latest \
   panpreposterous manuscript.md --bibliography references.bib --csl journal.csl -o manuscript.pdf
 ```
 
@@ -142,7 +154,7 @@ article/
 Then build from inside `article/`:
 
 ```bash
-docker run --rm -v "$PWD":/work panpreposterous \
+docker run --rm -v "$PWD":/work costantinicarlo/panpreposterous:latest \
   panpreposterous manuscript.md --bibliography references.bib --csl journal.csl -o output/manuscript-preprint.pdf
 ```
 
@@ -249,7 +261,13 @@ For a Markdown table that should appear as a one-column island, add the
 
 ## Troubleshooting Quick Checks
 
-If Docker cannot find the image, build it first:
+If Docker cannot find the image, pull the published image:
+
+```bash
+docker pull costantinicarlo/panpreposterous:latest
+```
+
+If you are developing locally or cannot use Docker Hub, build the image from the repository root:
 
 ```bash
 docker build -t panpreposterous -f Dockerfile .
@@ -286,7 +304,11 @@ If figures do not appear:
 
 ## Maintainer Notes
 
-Container publishing is automated with GitHub Actions:
+The public container image is published at:
+
+- <https://hub.docker.com/r/costantinicarlo/panpreposterous>
+
+Publishing to Docker Hub is automated with GitHub Actions, which keeps the public image aligned with repository releases:
 
 - Workflow: [.github/workflows/publish-image.yml](.github/workflows/publish-image.yml)
 - Push a tag like `v1.1.0` to publish `1.1.0` and `latest`
