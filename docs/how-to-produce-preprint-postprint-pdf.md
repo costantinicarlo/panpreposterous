@@ -47,13 +47,13 @@ article/
   references.bib
   journal.csl
   figs/
-    fig1.png
-    fig2.svg
-    photo1.jpg
+    fig1.svg
   tables/
     table1.tex
   output/
 ```
+
+If you want a ready-to-run starter bundle, use [examples](../examples).
 
 Practical naming tips:
 
@@ -197,6 +197,12 @@ Problem: Figure quality is poor.
 
 - Prefer higher-resolution source images.
 - Use vector formats where practical for line drawings.
+
+Problem: Figure spills into the next column in two-column layout.
+
+- Use a column-based width for that figure, for example:
+  `![Figure](figs/fig1.svg){#fig:main width=0.9\\columnwidth}`
+- Avoid large percentage widths that can be interpreted against full text width.
 
 Problem: SVG figure does not render as expected.
 

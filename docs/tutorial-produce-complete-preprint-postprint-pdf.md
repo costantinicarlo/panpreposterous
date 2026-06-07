@@ -44,10 +44,14 @@ article/
   references.bib
   journal.csl
   figs/
-    fig1.png
-    s1.pdf
+    fig1.svg
+  tables/
+    table1.tex
   output/
 ```
+
+Shortcut: you can copy the bundled starter from [examples](../examples) into
+your own `article` folder and edit from there.
 
 Checkpoint:
 
@@ -98,11 +102,14 @@ correspondence:
 
 This is a tutorial manuscript with one citation [@Smith2024].
 
-![Main figure](figs/fig1.png){#fig:main width=75%}
+![Main figure](figs/fig1.svg){#fig:main width=0.9\\columnwidth}
 
 # Methods
 
 Methods text.
+
+::: {.texinclude src="tables/table1.tex"}
+:::
 
 # Results
 
@@ -125,8 +132,6 @@ FA designed and wrote the study.
 :::
 
 ::: supplementary
-![Supplementary figure S1](figs/s1.pdf){#fig:s1 width=75%}
-
 Table: Supplementary table S1 {#tab:s1}
 :::
 ````
