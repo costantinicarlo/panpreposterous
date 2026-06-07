@@ -5,6 +5,12 @@
 		},
 		{
 			"path": "../../../../Local Documents/Obsidian/Academia/OPERATIONS/Projects/panpreposterous"
+		},
+		{
+			"path": "../preprint_template.pandoc"
+		},
+		{
+			"path": "../preprint_template.tex"
 		}
 	]
 }
