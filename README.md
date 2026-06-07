@@ -26,6 +26,25 @@ build commands, and troubleshooting), see:
 - [How to Produce a Preprint/Postprint PDF](docs/how-to-produce-preprint-postprint-pdf.md)
 - [Tutorial: Produce a Complete Preprint/Postprint PDF](docs/tutorial-produce-complete-preprint-postprint-pdf.md)
 
+## Release Notes
+
+For container image lineage and release-baseline policy, see:
+
+- [Container Image Lineage](docs/release/container-image-lineage.md)
+
+## Publish Image (Maintainers)
+
+Container publishing is automated with GitHub Actions:
+
+- Workflow: [.github/workflows/publish-image.yml](.github/workflows/publish-image.yml)
+- Push a tag like `v1.1.0` to publish `1.1.0` and `latest`
+- Or run workflow dispatch with `image_tag` and optional `push_latest`
+
+Repository secrets required:
+
+- `DOCKERHUB_USERNAME`
+- `DOCKERHUB_TOKEN`
+
 ### Template/YAML knobs (partial)
 
 - `twocolumn: true`

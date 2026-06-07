@@ -3,6 +3,12 @@
 
 FROM debian:bookworm-slim
 
+LABEL org.opencontainers.image.title="panpreposterous" \
+    org.opencontainers.image.description="Pandoc + XeLaTeX container for reproducible preprint/postprint PDFs" \
+    org.opencontainers.image.url="https://github.com/costantinicarlo/panpreposterous" \
+    org.opencontainers.image.source="https://github.com/costantinicarlo/panpreposterous" \
+    org.opencontainers.image.licenses="CC-BY-4.0"
+
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8
 
@@ -11,15 +17,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     make git pandoc \
  && rm -rf /var/lib/apt/lists/*
 
-# Install TinyTeX (admin mode) and add symlinks to /usr/local/bin
-RUN /bin/bash -lc "wget -qO- https://yihui.org/tinytex/install-bin-unix.sh | sh -s - --admin --no-path" && \
-    /root/.TinyTeX/bin/*/tlmgr path add
-
-# Ensure tlmgr in PATH for all arches
-ENV PATH="/root/.TinyTeX/bin/x86_64-linux:/root/.TinyTeX/bin/x86_64-linuxmusl:/root/.TinyTeX/bin/aarch64-linux:${PATH}"
+# Install TinyTeX and expose its binaries via stable symlinks in /usr/local/bin.
+RUN /bin/bash -lc 'set -euo pipefail; \
+    wget -qO- https://yihui.org/tinytex/install-bin-unix.sh | sh -s -- "" --no-path; \
+    tinytex_bin="$(find /root/.TinyTeX/bin -mindepth 1 -maxdepth 1 -type d | head -n 1)"; \
+    test -n "$tinytex_bin"; \
+    ln -sf "$tinytex_bin"/* /usr/local/bin/'
 
 # Install collections that cover all needed packages
-RUN /root/.TinyTeX/bin/*/tlmgr install \
+RUN tlmgr install \
     collection-latex \
     collection-latexrecommended \
     collection-latexextra \
