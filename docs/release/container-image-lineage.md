@@ -83,6 +83,29 @@ Build integrity is enforced before publish by the `verify-build` job, which:
 
 The publish job runs only if `verify-build` succeeds.
 
+## Non-Rigid Smoke-Test Policy
+
+The smoke test is intentionally structural and evolution-friendly.
+
+Release gate assertions:
+
+- container build succeeds
+- `panpreposterous --help` succeeds
+- bundled example render succeeds
+- output PDF exists and is non-empty
+
+Allowed evolution model:
+
+- template and filter changes may alter acceptable PDF content and layout
+- CI does not enforce strict PDF hash matching
+- CI does not enforce strict byte-size pinning
+
+Optional future structural assertions may include:
+
+- explicit renderer exit code checks (already enforced by `set -euo pipefail`)
+- minimum page-count threshold checks when a stable cross-platform method is
+  available
+
 ## Build Provenance Policy
 
 TinyTeX is installed from a pinned release artifact and verified by SHA256
