@@ -75,6 +75,11 @@ docker build -t panpreposterous -f Dockerfile .
 
 Use the Docker Hub image for ordinary manuscript builds. Build locally when you are developing Panpreposterous, testing local template/filter changes, or working without access to the registry. If you build locally with the command above, replace `costantinicarlo/panpreposterous:latest` with `panpreposterous` in the `docker run` commands below.
 
+Build integrity notes:
+
+- The image build pins a specific TinyTeX release artifact and verifies its SHA256 checksum in `Dockerfile` before extraction.
+- Container publication runs through a workflow guardrail that verifies a clean build and executes `panpreposterous --help` before any push step.
+
 ## Try the Bundled Example
 
 The fastest way to see the application work is to render the included example.
