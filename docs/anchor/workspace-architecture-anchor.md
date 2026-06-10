@@ -2,13 +2,13 @@
 
 ## Metadata
 
-- analysis_timestamp_utc: 2026-06-11T04:15:00Z
+- analysis_timestamp_utc: 2026-06-11T04:45:00Z
 - repository_root: /Users/carlocostantini/Dropbox/Macros, Scripts, Templates, Styles/LaTeX/panpreposterous
 - analysis_depth: deep
 - reproducibility_focus: true
 - deterministic_output: true
-- anchor_version: 12
-- supersedes: anchor_version 11 (2026-06-11)
+- anchor_version: 13
+- supersedes: anchor_version 12 (2026-06-11)
 
 ## Workspace Inventory
 
@@ -84,6 +84,7 @@ Layered model:
 - Runtime path-coupling hardening layer: Dockerfile path variables, wrapper path resolution, and CI asset-readability checks now enforce a shared path contract [E-020].
 - Wrapper help hardening layer: help output no longer depends on heredoc parsing and CI verifies structural help sections [E-021].
 - Local lineage scaffold layer: tracked script, fixture files, and tmp workspace contract now provide a stable baseline for repeatable local lineage checks [E-022].
+- Advisory CI lineage layer: pull requests to main run scaffold verification as a non-blocking quality signal while publish flow remains gated to release events [E-023].
 
 ## Component Responsibilities
 
@@ -116,13 +117,13 @@ Release path P-002 (container publication):
 3. publish job executes only if verify-build succeeds [E-011].
 4. Buildx pushes version and optional latest tags to Docker Hub [E-011].
 
-## Achieved Since Anchor v11
+## Achieved Since Anchor v12
 
-- ACH-016: NEXT-010 completed with tracked automation scaffold assets in scripts/, tests/lineage-fixture/, and tmp/lineage-check/, including a repeatable local verification flow [E-022].
+- ACH-017: NEXT-011 completed by integrating the lineage scaffold verifier into pull-request CI as an advisory (non-blocking) check and documenting the policy [E-023].
 
 ## Gaps and Risks (Current)
 
-- no critical or important risks currently identified; remaining work is incremental hardening and CI integration depth.
+- no critical or important pre-release risks currently identified.
 
 Resolved since v2:
 
@@ -132,6 +133,7 @@ Resolved since v2:
 - R-002 resolved: runtime path contract is now enforced by shared variables in image/wrapper plus CI readability assertions [E-002] [E-003] [E-011] [E-020].
 - R-004 resolved: wrapper help no longer relies on heredoc parsing and CI asserts help structure [E-003] [E-011] [E-021].
 - R-006 resolved: tracked local lineage scaffold assets now exist in scripts/, tests/lineage-fixture/, and tmp/lineage-check/ [E-022].
+- R-007 resolved: lineage scaffold drift now surfaces in pull-request CI through advisory verification [E-023].
 
 ## TODO Roadmap (Updated Status)
 
@@ -148,17 +150,11 @@ Resolved since v2:
 - T-011 (important): Reduce runtime path-coupling drift risk between wrapper expectations and image layout. Status: achieved [E-020].
 - T-012 (important): Remove wrapper help heredoc dependency to reduce shell-policy fragility risk. Status: achieved [E-021].
 - T-013 (suggestion): Add tracked automation assets to scripts/, tests/lineage-fixture/, and tmp/lineage-check/ scaffolding. Status: achieved [E-022].
-- T-014 (suggestion): Add optional CI invocation of the local lineage scaffold verifier for non-publish branches. Status: open.
+- T-014 (suggestion): Add optional CI invocation of the local lineage scaffold verifier for non-publish branches. Status: achieved [E-023].
 
 ## Natural Next Step
 
-- NEXT-011 (suggestion): Integrate local lineage scaffold checks into repository CI as a non-blocking quality signal.
-  - why now: foundational scaffold assets are now tracked and validated locally, enabling low-risk CI extension.
-  - expected impact: early detection of fixture/contract drift before publish workflows are involved.
-  - implementation sketch:
-    1. Add a dedicated CI step that runs scripts/verify-lineage-scaffold.sh on pull requests.
-    2. Keep this check advisory at first (non-blocking) while collecting false-positive rates.
-    3. Promote to required status once fixture stability is demonstrated.
+- no additional essential step required before first public release.
 
 ## Validation Commands
 
@@ -194,6 +190,12 @@ test -s "$smoke_dir/smoke-render.pdf"
 scripts/verify-lineage-scaffold.sh
 ```
 
+1. Verify advisory CI path (PR to main):
+
+- open or update a pull request targeting `main`
+- confirm `lineage-scaffold-advisory` appears in workflow checks
+- confirm failures are reported as advisory (non-blocking)
+
 ## Evidence Index
 
 - E-001: [README.md#L1](README.md#L1), [README.md#L58](README.md#L58), [README.md#L78](README.md#L78), [README.md#L110](README.md#L110), [README.md#L137](README.md#L137), [README.md#L164](README.md#L164), [README.md#L222](README.md#L222).
@@ -218,6 +220,7 @@ scripts/verify-lineage-scaffold.sh
 - E-020: [bin/panpreposterous#L4](bin/panpreposterous#L4), [bin/panpreposterous#L8](bin/panpreposterous#L8), [Dockerfile#L14](Dockerfile#L14), [Dockerfile#L51](Dockerfile#L51), [.github/workflows/publish-image.yml#L44](.github/workflows/publish-image.yml#L44).
 - E-021: [bin/panpreposterous#L12](bin/panpreposterous#L12), [bin/panpreposterous#L29](bin/panpreposterous#L29), [.github/workflows/publish-image.yml#L44](.github/workflows/publish-image.yml#L44), [docs/runtime-assumptions.md#L55](docs/runtime-assumptions.md#L55), [docs/troubleshooting.md#L167](docs/troubleshooting.md#L167).
 - E-022: [scripts/verify-lineage-scaffold.sh#L1](scripts/verify-lineage-scaffold.sh#L1), [tests/lineage-fixture/help-sections.txt#L1](tests/lineage-fixture/help-sections.txt#L1), [tests/lineage-fixture/runtime-assets.txt#L1](tests/lineage-fixture/runtime-assets.txt#L1), [tmp/lineage-check/README.md#L1](tmp/lineage-check/README.md#L1), [.gitignore#L26](.gitignore#L26), [docs/release/container-image-lineage.md#L91](docs/release/container-image-lineage.md#L91), [README.md#L339](README.md#L339).
+- E-023: [.github/workflows/publish-image.yml#L29](.github/workflows/publish-image.yml#L29), [.github/workflows/publish-image.yml#L36](.github/workflows/publish-image.yml#L36), [.github/workflows/publish-image.yml#L57](.github/workflows/publish-image.yml#L57), [docs/release/container-image-lineage.md#L94](docs/release/container-image-lineage.md#L94), [README.md#L345](README.md#L345).
 
 ## Machine Summary JSON
 
@@ -225,16 +228,16 @@ scripts/verify-lineage-scaffold.sh
 {
   "anchor": {
     "name": "Panpreposterous Workspace Architecture Anchor",
-    "analysis_timestamp_utc": "2026-06-11T04:15:00Z",
+    "analysis_timestamp_utc": "2026-06-11T04:45:00Z",
     "analysis_depth": "deep",
     "reproducibility_focus": true,
     "deterministic_output": true,
-    "anchor_version": 12
+    "anchor_version": 13
   },
-  "achieved_since_v11": {
+  "achieved_since_v12": {
     "count": 1,
     "ids": [
-      "ACH-016"
+      "ACH-017"
     ]
   },
   "risks": {
@@ -247,7 +250,8 @@ scripts/verify-lineage-scaffold.sh
       "R-005",
       "R-002",
       "R-004",
-      "R-006"
+      "R-006",
+      "R-007"
     ]
   },
   "todo": {
@@ -264,16 +268,15 @@ scripts/verify-lineage-scaffold.sh
       "T-010",
       "T-011",
       "T-012",
-      "T-013"
-    ],
-    "open": [
+      "T-013",
       "T-014"
     ],
+    "open": [],
     "partial": []
   },
-  "next_step": "NEXT-011",
+  "next_step": "none-essential-before-first-public-release",
   "evidence": {
-    "count": 22,
+    "count": 23,
     "ids": [
       "E-001",
       "E-002",
@@ -296,7 +299,8 @@ scripts/verify-lineage-scaffold.sh
       "E-019",
       "E-020",
       "E-021",
-      "E-022"
+      "E-022",
+      "E-023"
     ]
   }
 }

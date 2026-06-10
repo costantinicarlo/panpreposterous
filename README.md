@@ -342,6 +342,9 @@ writes a local status report under
 Scaffold ownership and tracking rules are documented in
 [tmp/lineage-check/README.md](tmp/lineage-check/README.md).
 
+Pull requests to `main` run this scaffold verification as a non-blocking
+advisory CI check.
+
 The public container image is published at:
 
 - <https://hub.docker.com/r/costantinicarlo/panpreposterous>

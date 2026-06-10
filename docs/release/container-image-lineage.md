@@ -91,6 +91,9 @@ Local baseline scaffold verification is also available through:
 - fixtures: [tests/lineage-fixture/README.md](../../tests/lineage-fixture/README.md)
 - workspace contract: [tmp/lineage-check/README.md](../../tmp/lineage-check/README.md)
 
+On pull requests to `main`, the same scaffold check is executed as an advisory
+CI signal (non-blocking).
+
 The publish job runs only if `verify-build` succeeds.
 
 ## Non-Rigid Smoke-Test Policy

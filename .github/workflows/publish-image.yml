@@ -4,6 +4,9 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     tags:
       - 'v*'
@@ -23,7 +26,35 @@ permissions:
   contents: read
 
 jobs:
+  lineage-scaffold-advisory:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Verify lineage scaffold (advisory)
+        id: lineage_check
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x scripts/verify-lineage-scaffold.sh
+          scripts/verify-lineage-scaffold.sh
+
+      - name: Report advisory status
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ steps.lineage_check.outcome }}" == "success" ]]; then
+            echo "Lineage scaffold advisory check passed."
+          else
+            echo "Lineage scaffold advisory check failed; this is currently non-blocking." >&2
+          fi
+
   verify-build:
+    if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -76,6 +107,7 @@ jobs:
           test -s "$smoke_dir/smoke-render.pdf"
 
   publish:
+    if: ${{ github.event_name != 'pull_request' }}
     needs: verify-build
     runs-on: ubuntu-latest
     env:
