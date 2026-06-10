@@ -272,6 +272,12 @@ For full filter behavior contracts and before/after examples, see
 
 ## Troubleshooting Quick Checks
 
+Environment assumptions and host-variability boundaries are documented in
+[Runtime Assumptions and Environment Constraints](docs/runtime-assumptions.md).
+
+For categorized failure modes and diagnostics, see
+[Troubleshooting Guide](docs/troubleshooting.md).
+
 If Docker cannot find the image, pull the published image:
 
 ```bash
@@ -308,6 +314,10 @@ If figures do not appear:
   [Architecture Overview](docs/architecture.md)
 - Need filter behavior details:
   [Filter Behavior Contract](docs/filters.md)
+- Need runtime/environment assumptions:
+  [Runtime Assumptions and Environment Constraints](docs/runtime-assumptions.md)
+- Need failure diagnostics by symptom:
+  [Troubleshooting Guide](docs/troubleshooting.md)
 - New to the workflow:
   [Tutorial: Produce a Complete Preprint/Postprint PDF](docs/tutorial-produce-complete-preprint-postprint-pdf.md)
 - Have your files ready:

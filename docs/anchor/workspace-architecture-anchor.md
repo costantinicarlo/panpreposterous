@@ -2,13 +2,13 @@
 
 ## Metadata
 
-- analysis_timestamp_utc: 2026-06-11T01:35:00Z
+- analysis_timestamp_utc: 2026-06-11T02:05:00Z
 - repository_root: /Users/carlocostantini/Dropbox/Macros, Scripts, Templates, Styles/LaTeX/panpreposterous
 - analysis_depth: deep
 - reproducibility_focus: true
 - deterministic_output: true
-- anchor_version: 7
-- supersedes: anchor_version 6 (2026-06-11)
+- anchor_version: 8
+- supersedes: anchor_version 7 (2026-06-11)
 
 ## Workspace Inventory
 
@@ -79,6 +79,7 @@ Layered model:
 - Architecture documentation layer: docs/architecture.md captures subsystem boundaries, flow contracts, and technical cross-links [E-015].
 - Input contract documentation layer: docs/inputs.md defines required and optional manuscript metadata keys and validation checklist [E-016].
 - Filter behavior documentation layer: docs/filters.md defines class contracts, table-policy overrides, and supplementary behavior expectations [E-017].
+- Runtime assumptions documentation layer: docs/runtime-assumptions.md and docs/troubleshooting.md define environment constraints and symptom-based diagnostics [E-018].
 
 ## Component Responsibilities
 
@@ -111,9 +112,9 @@ Release path P-002 (container publication):
 3. publish job executes only if verify-build succeeds [E-011].
 4. Buildx pushes version and optional latest tags to Docker Hub [E-011].
 
-## Achieved Since Anchor v6
+## Achieved Since Anchor v7
 
-- ACH-011: Filter behavior contract is now documented in docs/filters.md and linked from README and docs/inputs.md as the filter source of truth [E-001] [E-016] [E-017].
+- ACH-012: Runtime assumptions are now documented and cross-linked from README quick checks and troubleshooting guidance [E-001] [E-018].
 
 ## Gaps and Risks (Current)
 
@@ -134,21 +135,21 @@ Resolved since v2:
 - T-003 (important): Create minimal smoke-test example with bundled assets and expected output checksum strategy. Status: achieved with non-rigid policy exception (assets + smoke render present; strict checksum intentionally not required) [E-011] [E-012] [E-014].
 - T-004 (important): Add CI task for image build and panpreposterous --help verification. Status: achieved [E-011].
 - T-005 (suggestion): Add CI task for rendering smoke example and validating generated PDF presence. Status: achieved [E-011].
-- T-006 (suggestion): Document unsupported/unknown runtime assumptions (fonts, external binaries, host volume permissions). Status: open.
+- T-006 (suggestion): Document unsupported/unknown runtime assumptions (fonts, external binaries, host volume permissions). Status: achieved [E-018].
 - T-007 (important): Create docs/architecture.md summarizing subsystem boundaries and execution flow. Status: achieved [E-015].
 - T-008 (important): Create docs/inputs.md describing required and optional manuscript metadata keys. Status: achieved [E-016].
 - T-009 (suggestion): Create docs/filters.md for Div classes and table-policy behavior. Status: achieved [E-017].
-- T-010 (suggestion): Create docs/troubleshooting.md for common render failures and remediation steps. Status: partially achieved via expanded README and docs/how-to coverage [E-001].
+- T-010 (suggestion): Create docs/troubleshooting.md for common render failures and remediation steps. Status: partially achieved via expanded README plus dedicated troubleshooting and runtime-assumptions docs [E-001] [E-018].
 
 ## Natural Next Step
 
-- NEXT-006 (suggestion): Document unsupported and environment-dependent runtime assumptions.
-  - why now: filter and metadata behavior are documented, so the highest remaining reliability risk is implicit environment assumptions outside manuscript content.
-  - expected impact: faster diagnosis of host/container mismatch issues and fewer false-negative troubleshooting cycles.
+- NEXT-007 (suggestion): Consolidate troubleshooting playbooks into command-level validation paths.
+  - why now: environment assumptions are now explicit, so the next leverage point is turning troubleshooting guidance into reproducible command sequences.
+  - expected impact: shorter support loops and more consistent triage outcomes across contributors.
   - implementation sketch:
-    1. Add a dedicated runtime assumptions section covering fonts, Docker volume permissions, and filesystem path expectations.
-    2. Document known cross-platform variability points and non-goals for strict PDF byte-level determinism.
-    3. Cross-link docs/troubleshooting.md and README quick checks to this assumptions reference.
+    1. Add command-first troubleshooting recipes for image pull/build, wrapper preflight, and smoke render checks.
+    2. Add expected outputs and failure signatures per recipe for faster branch-and-bound debugging.
+    3. Link each recipe to related assumptions in docs/runtime-assumptions.md.
 
 ## Validation Commands
 
@@ -197,6 +198,7 @@ test -s "$smoke_dir/smoke-render.pdf"
 - E-015: [docs/architecture.md#L1](docs/architecture.md#L1), [docs/architecture.md#L11](docs/architecture.md#L11), [docs/architecture.md#L62](docs/architecture.md#L62), [README.md#L301](README.md#L301), [docs/release/container-image-lineage.md#L30](docs/release/container-image-lineage.md#L30).
 - E-016: [docs/inputs.md#L1](docs/inputs.md#L1), [docs/inputs.md#L24](docs/inputs.md#L24), [docs/inputs.md#L67](docs/inputs.md#L67), [README.md#L213](README.md#L213), [docs/anchor/workspace-architecture-anchor.md#L138](docs/anchor/workspace-architecture-anchor.md#L138).
 - E-017: [docs/filters.md#L1](docs/filters.md#L1), [docs/filters.md#L96](docs/filters.md#L96), [docs/filters.md#L171](docs/filters.md#L171), [README.md#L270](README.md#L270), [docs/inputs.md#L130](docs/inputs.md#L130).
+- E-018: [docs/runtime-assumptions.md#L1](docs/runtime-assumptions.md#L1), [docs/runtime-assumptions.md#L22](docs/runtime-assumptions.md#L22), [docs/runtime-assumptions.md#L45](docs/runtime-assumptions.md#L45), [docs/troubleshooting.md#L1](docs/troubleshooting.md#L1), [README.md#L275](README.md#L275).
 
 ## Machine Summary JSON
 
@@ -204,16 +206,16 @@ test -s "$smoke_dir/smoke-render.pdf"
 {
   "anchor": {
     "name": "Panpreposterous Workspace Architecture Anchor",
-    "analysis_timestamp_utc": "2026-06-11T01:35:00Z",
+    "analysis_timestamp_utc": "2026-06-11T02:05:00Z",
     "analysis_depth": "deep",
     "reproducibility_focus": true,
     "deterministic_output": true,
-    "anchor_version": 7
+    "anchor_version": 8
   },
-  "achieved_since_v6": {
+  "achieved_since_v7": {
     "count": 1,
     "ids": [
-      "ACH-011"
+      "ACH-012"
     ]
   },
   "risks": {
@@ -238,20 +240,19 @@ test -s "$smoke_dir/smoke-render.pdf"
       "T-003",
       "T-004",
       "T-005",
+      "T-006",
       "T-007",
       "T-008",
       "T-009"
     ],
-    "open": [
-      "T-006"
-    ],
+    "open": [],
     "partial": [
       "T-010"
     ]
   },
-  "next_step": "NEXT-006",
+  "next_step": "NEXT-007",
   "evidence": {
-    "count": 17,
+    "count": 18,
     "ids": [
       "E-001",
       "E-002",
@@ -269,7 +270,8 @@ test -s "$smoke_dir/smoke-render.pdf"
       "E-014",
       "E-015",
       "E-016",
-      "E-017"
+      "E-017",
+      "E-018"
     ]
   }
 }
