@@ -2,13 +2,13 @@
 
 ## Metadata
 
-- analysis_timestamp_utc: 2026-06-11T00:45:00Z
+- analysis_timestamp_utc: 2026-06-11T01:10:00Z
 - repository_root: /Users/carlocostantini/Dropbox/Macros, Scripts, Templates, Styles/LaTeX/panpreposterous
 - analysis_depth: deep
 - reproducibility_focus: true
 - deterministic_output: true
-- anchor_version: 5
-- supersedes: anchor_version 4 (2026-06-11)
+- anchor_version: 6
+- supersedes: anchor_version 5 (2026-06-11)
 
 ## Workspace Inventory
 
@@ -77,6 +77,7 @@ Layered model:
 - Release automation layer: verify-build job gates publication by requiring build + help + example render success before push [E-011].
 - Release governance layer: lineage docs encode legacy baseline policy, provenance policy, and non-rigid smoke policy [E-012] [E-013].
 - Architecture documentation layer: docs/architecture.md captures subsystem boundaries, flow contracts, and technical cross-links [E-015].
+- Input contract documentation layer: docs/inputs.md defines required and optional manuscript metadata keys and validation checklist [E-016].
 
 ## Component Responsibilities
 
@@ -109,9 +110,9 @@ Release path P-002 (container publication):
 3. publish job executes only if verify-build succeeds [E-011].
 4. Buildx pushes version and optional latest tags to Docker Hub [E-011].
 
-## Achieved Since Anchor v4
+## Achieved Since Anchor v5
 
-- ACH-009: Architecture reference documentation is now established in docs/architecture.md and linked from README and release lineage docs [E-001] [E-012] [E-015].
+- ACH-010: Manuscript input contract is now documented in docs/inputs.md and linked from README usage guidance and this anchor roadmap [E-001] [E-016].
 
 ## Gaps and Risks (Current)
 
@@ -134,19 +135,19 @@ Resolved since v2:
 - T-005 (suggestion): Add CI task for rendering smoke example and validating generated PDF presence. Status: achieved [E-011].
 - T-006 (suggestion): Document unsupported/unknown runtime assumptions (fonts, external binaries, host volume permissions). Status: open.
 - T-007 (important): Create docs/architecture.md summarizing subsystem boundaries and execution flow. Status: achieved [E-015].
-- T-008 (important): Create docs/inputs.md describing required and optional manuscript metadata keys. Status: open.
+- T-008 (important): Create docs/inputs.md describing required and optional manuscript metadata keys. Status: achieved [E-016].
 - T-009 (suggestion): Create docs/filters.md for Div classes and table-policy behavior. Status: open.
 - T-010 (suggestion): Create docs/troubleshooting.md for common render failures and remediation steps. Status: partially achieved via expanded README and docs/how-to coverage [E-001].
 
 ## Natural Next Step
 
-- NEXT-004 (important): Create docs/inputs.md describing required and optional manuscript metadata keys.
-  - why now: architecture and runtime contracts are documented, so the next highest-impact gap is input contract clarity for manuscript authors.
-  - expected impact: fewer authoring errors, faster first successful render, and lower support overhead for metadata-related failures.
+- NEXT-005 (suggestion): Create docs/filters.md for Div classes and table-policy behavior.
+  - why now: metadata expectations are now documented, so the next remaining high-friction authoring gap is filter behavior discoverability.
+  - expected impact: fewer layout surprises in two-column mode and clearer usage of backmatter, supplementary, onecol, and allowmd patterns.
   - implementation sketch:
-    1. Define a minimal required metadata set with validated examples.
-    2. Document optional metadata fields grouped by behavior domain (layout, DOI labels, references spacing, correspondence).
-    3. Cross-link README usage sections and this anchor to docs/inputs.md as the metadata source of truth.
+    1. Document each supported Div/class contract with before/after examples.
+    2. Explain table policy behavior in twocolumn mode, including allowmd and onecol usage.
+    3. Cross-link README sections and docs/inputs.md to docs/filters.md as the filter behavior source of truth.
 
 ## Validation Commands
 
@@ -193,6 +194,7 @@ test -s "$smoke_dir/smoke-render.pdf"
 - E-013: [docs/release/legacy-image-baseline.json#L7](docs/release/legacy-image-baseline.json#L7), [docs/release/legacy-image-baseline.json#L8](docs/release/legacy-image-baseline.json#L8), [docs/release/legacy-image-baseline.json#L9](docs/release/legacy-image-baseline.json#L9), [docs/release/legacy-image-baseline.json#L17](docs/release/legacy-image-baseline.json#L17), [docs/release/legacy-image-baseline.json#L19](docs/release/legacy-image-baseline.json#L19).
 - E-014: [examples/README.md#L1](examples/README.md#L1), [examples/README.md#L6](examples/README.md#L6), [examples/README.md#L12](examples/README.md#L12), [examples/README.md#L26](examples/README.md#L26), [examples/README.md#L33](examples/README.md#L33).
 - E-015: [docs/architecture.md#L1](docs/architecture.md#L1), [docs/architecture.md#L11](docs/architecture.md#L11), [docs/architecture.md#L62](docs/architecture.md#L62), [README.md#L301](README.md#L301), [docs/release/container-image-lineage.md#L30](docs/release/container-image-lineage.md#L30).
+- E-016: [docs/inputs.md#L1](docs/inputs.md#L1), [docs/inputs.md#L24](docs/inputs.md#L24), [docs/inputs.md#L67](docs/inputs.md#L67), [README.md#L213](README.md#L213), [docs/anchor/workspace-architecture-anchor.md#L138](docs/anchor/workspace-architecture-anchor.md#L138).
 
 ## Machine Summary JSON
 
@@ -200,16 +202,16 @@ test -s "$smoke_dir/smoke-render.pdf"
 {
   "anchor": {
     "name": "Panpreposterous Workspace Architecture Anchor",
-    "analysis_timestamp_utc": "2026-06-11T00:45:00Z",
+    "analysis_timestamp_utc": "2026-06-11T01:10:00Z",
     "analysis_depth": "deep",
     "reproducibility_focus": true,
     "deterministic_output": true,
-    "anchor_version": 5
+    "anchor_version": 6
   },
-  "achieved_since_v4": {
+  "achieved_since_v5": {
     "count": 1,
     "ids": [
-      "ACH-009"
+      "ACH-010"
     ]
   },
   "risks": {
@@ -234,20 +236,20 @@ test -s "$smoke_dir/smoke-render.pdf"
       "T-003",
       "T-004",
       "T-005",
-      "T-007"
+      "T-007",
+      "T-008"
     ],
     "open": [
       "T-006",
-      "T-008",
       "T-009"
     ],
     "partial": [
       "T-010"
     ]
   },
-  "next_step": "NEXT-004",
+  "next_step": "NEXT-005",
   "evidence": {
-    "count": 15,
+    "count": 16,
     "ids": [
       "E-001",
       "E-002",
@@ -263,7 +265,8 @@ test -s "$smoke_dir/smoke-render.pdf"
       "E-012",
       "E-013",
       "E-014",
-      "E-015"
+      "E-015",
+      "E-016"
     ]
   }
 }

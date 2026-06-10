@@ -210,6 +210,9 @@ Common YAML fields include:
 - `side_doi_color`, `side_doi_opacity`, `side_doi_shift`,
   `side_doi_rotation`
 
+For a complete metadata contract with required versus optional keys, see
+[Manuscript Input Contract](docs/inputs.md).
+
 ## Backmatter
 
 Put acknowledgements, author contributions, competing interests, or similar sections in a `backmatter` block:
