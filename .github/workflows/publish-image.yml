@@ -23,7 +23,26 @@ permissions:
   contents: read
 
 jobs:
+  verify-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Build verification image
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker build -t panpreposterous:ci-verify -f Dockerfile .
+
+      - name: Verify wrapper help
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --rm panpreposterous:ci-verify panpreposterous --help
+
   publish:
+    needs: verify-build
     runs-on: ubuntu-latest
     env:
       IMAGE_NAME: docker.io/costantinicarlo/panpreposterous
