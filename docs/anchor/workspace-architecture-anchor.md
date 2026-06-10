@@ -2,13 +2,13 @@
 
 ## Metadata
 
-- analysis_timestamp_utc: 2026-06-11T03:00:00Z
+- analysis_timestamp_utc: 2026-06-11T03:30:00Z
 - repository_root: /Users/carlocostantini/Dropbox/Macros, Scripts, Templates, Styles/LaTeX/panpreposterous
 - analysis_depth: deep
 - reproducibility_focus: true
 - deterministic_output: true
-- anchor_version: 10
-- supersedes: anchor_version 9 (2026-06-11)
+- anchor_version: 11
+- supersedes: anchor_version 10 (2026-06-11)
 
 ## Workspace Inventory
 
@@ -82,6 +82,7 @@ Layered model:
 - Runtime assumptions documentation layer: docs/runtime-assumptions.md and docs/troubleshooting.md define environment constraints and symptom-based diagnostics [E-018].
 - Troubleshooting playbook layer: docs/troubleshooting.md now includes command-level validation paths with expected outputs and failure signatures [E-019].
 - Runtime path-coupling hardening layer: Dockerfile path variables, wrapper path resolution, and CI asset-readability checks now enforce a shared path contract [E-020].
+- Wrapper help hardening layer: help output no longer depends on heredoc parsing and CI verifies structural help sections [E-021].
 
 ## Component Responsibilities
 
@@ -114,13 +115,12 @@ Release path P-002 (container publication):
 3. publish job executes only if verify-build succeeds [E-011].
 4. Buildx pushes version and optional latest tags to Docker Hub [E-011].
 
-## Achieved Since Anchor v9
+## Achieved Since Anchor v10
 
-- ACH-014: Runtime path-coupling is hardened through shared path variables, wrapper environment-backed path resolution, and explicit CI readability assertions for required assets [E-002] [E-003] [E-011] [E-018] [E-020].
+- ACH-015: Wrapper help emission now uses a printf-based path, CI validates help sections, and shell-behavior expectations are documented in runtime/troubleshooting docs [E-003] [E-011] [E-018] [E-019] [E-021].
 
 ## Gaps and Risks (Current)
 
-- R-004 (important): Wrapper help continues to rely on heredoc emission; valid in runtime shell, but can be sensitive in stricter shell-policy environments [E-003].
 - R-006 (suggestion): scripts/, tests/lineage-fixture/, and tmp/lineage-check/ remain structurally present but unpopulated with tracked automation assets.
 
 Resolved since v2:
@@ -129,6 +129,7 @@ Resolved since v2:
 - R-005 resolved: repository automation now validates render path through smoke test before publish [E-011].
 - R-003 resolved: release-state semantics now align between lineage markdown and machine baseline JSON [E-012] [E-013].
 - R-002 resolved: runtime path contract is now enforced by shared variables in image/wrapper plus CI readability assertions [E-002] [E-003] [E-011] [E-020].
+- R-004 resolved: wrapper help no longer relies on heredoc parsing and CI asserts help structure [E-003] [E-011] [E-021].
 
 ## TODO Roadmap (Updated Status)
 
@@ -143,17 +144,18 @@ Resolved since v2:
 - T-009 (suggestion): Create docs/filters.md for Div classes and table-policy behavior. Status: achieved [E-017].
 - T-010 (suggestion): Create docs/troubleshooting.md for common render failures and remediation steps. Status: achieved with command-level playbooks and failure signatures [E-018] [E-019].
 - T-011 (important): Reduce runtime path-coupling drift risk between wrapper expectations and image layout. Status: achieved [E-020].
-- T-012 (important): Remove wrapper help heredoc dependency to reduce shell-policy fragility risk. Status: open.
+- T-012 (important): Remove wrapper help heredoc dependency to reduce shell-policy fragility risk. Status: achieved [E-021].
+- T-013 (suggestion): Add tracked automation assets to scripts/, tests/lineage-fixture/, and tmp/lineage-check/ scaffolding. Status: open.
 
 ## Natural Next Step
 
-- NEXT-009 (important): Remove wrapper help heredoc dependency in `bin/panpreposterous`.
-  - why now: path-coupling hardening is complete, and the top remaining important risk is shell-policy sensitivity around heredoc help emission.
-  - expected impact: lower shell-compatibility risk and cleaner wrapper behavior in stricter execution environments.
+- NEXT-010 (suggestion): Populate repository automation scaffolding currently present but mostly untracked.
+  - why now: all important reliability risks are resolved, and the remaining visible gap is operational scaffolding depth.
+  - expected impact: better long-term maintainability and easier reproducibility checks for future contributors.
   - implementation sketch:
-    1. Replace heredoc help block with a stable printf/cat-file approach that avoids multiline heredoc parsing dependency.
-    2. Add a lightweight CI check validating help output still includes expected sections after refactor.
-    3. Document the change in docs/runtime-assumptions.md and docs/troubleshooting.md where shell-behavior caveats are referenced.
+    1. Add baseline scripts in scripts/ for repeatable local verification flows.
+    2. Add lightweight fixtures and expected-structure checks under tests/lineage-fixture/.
+    3. Add a small lineage-check runner contract and document intended ownership of tmp/lineage-check outputs.
 
 ## Validation Commands
 
@@ -205,6 +207,7 @@ test -s "$smoke_dir/smoke-render.pdf"
 - E-018: [docs/runtime-assumptions.md#L1](docs/runtime-assumptions.md#L1), [docs/runtime-assumptions.md#L22](docs/runtime-assumptions.md#L22), [docs/runtime-assumptions.md#L45](docs/runtime-assumptions.md#L45), [docs/troubleshooting.md#L1](docs/troubleshooting.md#L1), [README.md#L275](README.md#L275).
 - E-019: [docs/troubleshooting.md#L18](docs/troubleshooting.md#L18), [docs/troubleshooting.md#L22](docs/troubleshooting.md#L22), [docs/troubleshooting.md#L53](docs/troubleshooting.md#L53), [docs/troubleshooting.md#L75](docs/troubleshooting.md#L75), [docs/troubleshooting.md#L107](docs/troubleshooting.md#L107).
 - E-020: [bin/panpreposterous#L4](bin/panpreposterous#L4), [bin/panpreposterous#L8](bin/panpreposterous#L8), [Dockerfile#L14](Dockerfile#L14), [Dockerfile#L51](Dockerfile#L51), [.github/workflows/publish-image.yml#L44](.github/workflows/publish-image.yml#L44).
+- E-021: [bin/panpreposterous#L12](bin/panpreposterous#L12), [bin/panpreposterous#L29](bin/panpreposterous#L29), [.github/workflows/publish-image.yml#L44](.github/workflows/publish-image.yml#L44), [docs/runtime-assumptions.md#L55](docs/runtime-assumptions.md#L55), [docs/troubleshooting.md#L167](docs/troubleshooting.md#L167).
 
 ## Machine Summary JSON
 
@@ -212,23 +215,21 @@ test -s "$smoke_dir/smoke-render.pdf"
 {
   "anchor": {
     "name": "Panpreposterous Workspace Architecture Anchor",
-    "analysis_timestamp_utc": "2026-06-11T03:00:00Z",
+    "analysis_timestamp_utc": "2026-06-11T03:30:00Z",
     "analysis_depth": "deep",
     "reproducibility_focus": true,
     "deterministic_output": true,
-    "anchor_version": 10
+    "anchor_version": 11
   },
-  "achieved_since_v9": {
+  "achieved_since_v10": {
     "count": 1,
     "ids": [
-      "ACH-014"
+      "ACH-015"
     ]
   },
   "risks": {
-    "count": 2,
-    "important": [
-      "R-004"
-    ],
+    "count": 1,
+    "important": [],
     "suggestion": [
       "R-006"
     ],
@@ -236,7 +237,8 @@ test -s "$smoke_dir/smoke-render.pdf"
       "R-001",
       "R-003",
       "R-005",
-      "R-002"
+      "R-002",
+      "R-004"
     ]
   },
   "todo": {
@@ -251,16 +253,17 @@ test -s "$smoke_dir/smoke-render.pdf"
       "T-008",
       "T-009",
       "T-010",
-      "T-011"
+      "T-011",
+      "T-012"
     ],
     "open": [
-      "T-012"
+      "T-013"
     ],
     "partial": []
   },
-  "next_step": "NEXT-009",
+  "next_step": "NEXT-010",
   "evidence": {
-    "count": 20,
+    "count": 21,
     "ids": [
       "E-001",
       "E-002",
@@ -281,7 +284,8 @@ test -s "$smoke_dir/smoke-render.pdf"
       "E-017",
       "E-018",
       "E-019",
-      "E-020"
+      "E-020",
+      "E-021"
     ]
   }
 }

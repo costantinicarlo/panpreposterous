@@ -52,6 +52,19 @@ Failure signals for path drift:
   - `required Lua filter not found or not readable`
 - CI fails in verify-build path validation if any required asset is unreadable.
 
+## Shell Behavior Assumptions
+
+- Wrapper help output is emitted through a `printf`-based function, not a
+  heredoc block.
+- CI validates that help output retains core structural sections (`Usage`,
+  `Defaults`, `Example`).
+
+Failure signals for shell/help regressions:
+
+- CI `Verify help sections` step fails if any required section heading is
+  missing.
+- unexpected or truncated help output in local wrapper preflight.
+
 ## Font and TeX Toolchain Assumptions
 
 - PDF rendering depends on the container-bundled TinyTeX distribution and TeX

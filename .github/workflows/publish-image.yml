@@ -41,6 +41,15 @@ jobs:
           set -euo pipefail
           docker run --rm panpreposterous:ci-verify panpreposterous --help
 
+      - name: Verify help sections
+        shell: bash
+        run: |
+          set -euo pipefail
+          help_output="$(docker run --rm panpreposterous:ci-verify panpreposterous --help)"
+          printf '%s\n' "$help_output" | grep -q '^Usage:'
+          printf '%s\n' "$help_output" | grep -q '^Defaults:'
+          printf '%s\n' "$help_output" | grep -q '^Example:'
+
       - name: Verify runtime asset paths
         shell: bash
         run: |

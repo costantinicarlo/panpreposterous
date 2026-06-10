@@ -9,22 +9,25 @@ TEMPLATE_PATH="${PANPREPOSTEROUS_TEMPLATE_PATH:-${PANPREPOSTEROUS_TEMPLATE_DIR}/
 BACKMATTER_FILTER_PATH="${PANPREPOSTEROUS_BACKMATTER_FILTER_PATH:-${PANPREPOSTEROUS_FILTERS_DIR}/backmatter.lua}"
 SUPPLEMENTARY_FILTER_PATH="${PANPREPOSTEROUS_SUPPLEMENTARY_FILTER_PATH:-${PANPREPOSTEROUS_FILTERS_DIR}/supplementary.lua}"
 
+print_help() {
+  printf '%s\n' \
+    "Panpreposterous — build reproducible PDFs with Pandoc + XeLaTeX" \
+    "" \
+    "Usage:" \
+    "  panpreposterous INPUT.md [-o output.pdf] [--csl style.csl] [--bibliography refs.bib] [extra pandoc args...]" \
+    "" \
+    "Defaults:" \
+    "  template: $TEMPLATE_PATH" \
+    "  filters : $BACKMATTER_FILTER_PATH, $SUPPLEMENTARY_FILTER_PATH" \
+    "  engine  : xelatex" \
+    "  citeproc: on" \
+    "" \
+    "Example:" \
+    "  panpreposterous manuscript.md --bibliography refs.bib --csl journal.csl -o manuscript.pdf"
+}
+
 if [[ "${1:-}" == "--help" || $# -lt 1 ]]; then
-  cat <<EOF
-Panpreposterous — build reproducible PDFs with Pandoc + XeLaTeX
-
-Usage:
-  panpreposterous INPUT.md [-o output.pdf] [--csl style.csl] [--bibliography refs.bib] [extra pandoc args...]
-
-Defaults:
-  template: $TEMPLATE_PATH
-  filters : $BACKMATTER_FILTER_PATH, $SUPPLEMENTARY_FILTER_PATH
-  engine  : xelatex
-  citeproc: on
-
-Example:
-  panpreposterous manuscript.md --bibliography refs.bib --csl journal.csl -o manuscript.pdf
-EOF
+  print_help
   exit 0
 fi
 

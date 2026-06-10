@@ -175,6 +175,8 @@ Checks:
 - confirm command runs inside container image
 - confirm image layout includes `/opt/panpreposterous/template` and
   `/opt/panpreposterous/filters`
+- run `panpreposterous --help` and confirm `Usage`, `Defaults`, and `Example`
+  headings are present
 
 ## Environment-Dependent Issues
 
@@ -184,6 +186,9 @@ When behavior differs across hosts or over time, consult:
 
 This is especially relevant for PDF checksum and byte-size differences that are
 not necessarily regressions.
+
+For shell/help-output behavior assumptions and CI checks, see
+[docs/runtime-assumptions.md](runtime-assumptions.md#shell-behavior-assumptions).
 
 ## Related Documents
 
