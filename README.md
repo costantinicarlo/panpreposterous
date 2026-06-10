@@ -298,6 +298,8 @@ If figures do not appear:
 
 ## Further Guides
 
+- Need the technical execution map:
+  [Architecture Overview](docs/architecture.md)
 - New to the workflow:
   [Tutorial: Produce a Complete Preprint/Postprint PDF](docs/tutorial-produce-complete-preprint-postprint-pdf.md)
 - Have your files ready:

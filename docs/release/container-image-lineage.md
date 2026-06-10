@@ -27,6 +27,10 @@ Until the legacy image is compared against the current tracked workspace:
 
 ## Current Workspace Position
 
+Architecture map source:
+
+- [docs/architecture.md](../architecture.md)
+
 The current workspace uses:
 
 - [Dockerfile](../../Dockerfile)
