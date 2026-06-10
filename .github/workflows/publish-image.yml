@@ -41,6 +41,20 @@ jobs:
           set -euo pipefail
           docker run --rm panpreposterous:ci-verify panpreposterous --help
 
+      - name: Render bundled example
+        shell: bash
+        run: |
+          set -euo pipefail
+          smoke_dir="$(mktemp -d)"
+          cp examples/manuscript.md "$smoke_dir"/
+          cp examples/references.bib "$smoke_dir"/
+          cp examples/journal.csl "$smoke_dir"/
+          cp -R examples/figs "$smoke_dir"/
+          cp -R examples/tables "$smoke_dir"/
+          docker run --rm -v "$smoke_dir":/work panpreposterous:ci-verify \
+            panpreposterous manuscript.md --bibliography references.bib --csl journal.csl -o smoke-render.pdf
+          test -s "$smoke_dir/smoke-render.pdf"
+
   publish:
     needs: verify-build
     runs-on: ubuntu-latest
