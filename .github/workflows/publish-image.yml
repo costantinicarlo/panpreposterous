@@ -41,6 +41,17 @@ jobs:
           set -euo pipefail
           docker run --rm panpreposterous:ci-verify panpreposterous --help
 
+      - name: Verify runtime asset paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --rm panpreposterous:ci-verify sh -lc '
+            set -eu
+            test -r "$PANPREPOSTEROUS_TEMPLATE_PATH"
+            test -r "$PANPREPOSTEROUS_BACKMATTER_FILTER_PATH"
+            test -r "$PANPREPOSTEROUS_SUPPLEMENTARY_FILTER_PATH"
+          '
+
       - name: Render bundled example
         shell: bash
         run: |

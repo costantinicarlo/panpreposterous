@@ -2,13 +2,13 @@
 
 ## Metadata
 
-- analysis_timestamp_utc: 2026-06-11T02:30:00Z
+- analysis_timestamp_utc: 2026-06-11T03:00:00Z
 - repository_root: /Users/carlocostantini/Dropbox/Macros, Scripts, Templates, Styles/LaTeX/panpreposterous
 - analysis_depth: deep
 - reproducibility_focus: true
 - deterministic_output: true
-- anchor_version: 9
-- supersedes: anchor_version 8 (2026-06-11)
+- anchor_version: 10
+- supersedes: anchor_version 9 (2026-06-11)
 
 ## Workspace Inventory
 
@@ -81,6 +81,7 @@ Layered model:
 - Filter behavior documentation layer: docs/filters.md defines class contracts, table-policy overrides, and supplementary behavior expectations [E-017].
 - Runtime assumptions documentation layer: docs/runtime-assumptions.md and docs/troubleshooting.md define environment constraints and symptom-based diagnostics [E-018].
 - Troubleshooting playbook layer: docs/troubleshooting.md now includes command-level validation paths with expected outputs and failure signatures [E-019].
+- Runtime path-coupling hardening layer: Dockerfile path variables, wrapper path resolution, and CI asset-readability checks now enforce a shared path contract [E-020].
 
 ## Component Responsibilities
 
@@ -113,13 +114,12 @@ Release path P-002 (container publication):
 3. publish job executes only if verify-build succeeds [E-011].
 4. Buildx pushes version and optional latest tags to Docker Hub [E-011].
 
-## Achieved Since Anchor v8
+## Achieved Since Anchor v9
 
-- ACH-013: Troubleshooting guidance now includes command-first playbooks for pull/build, wrapper preflight, smoke render, and symptom branching [E-018] [E-019].
+- ACH-014: Runtime path-coupling is hardened through shared path variables, wrapper environment-backed path resolution, and explicit CI readability assertions for required assets [E-002] [E-003] [E-011] [E-018] [E-020].
 
 ## Gaps and Risks (Current)
 
-- R-002 (important): Runtime still depends on absolute in-container paths across Dockerfile and wrapper script; drift can still cause hard failures [E-002] [E-003].
 - R-004 (important): Wrapper help continues to rely on heredoc emission; valid in runtime shell, but can be sensitive in stricter shell-policy environments [E-003].
 - R-006 (suggestion): scripts/, tests/lineage-fixture/, and tmp/lineage-check/ remain structurally present but unpopulated with tracked automation assets.
 
@@ -128,6 +128,7 @@ Resolved since v2:
 - R-001 resolved: TinyTeX provenance now pinned and checksum-verified in Dockerfile [E-002].
 - R-005 resolved: repository automation now validates render path through smoke test before publish [E-011].
 - R-003 resolved: release-state semantics now align between lineage markdown and machine baseline JSON [E-012] [E-013].
+- R-002 resolved: runtime path contract is now enforced by shared variables in image/wrapper plus CI readability assertions [E-002] [E-003] [E-011] [E-020].
 
 ## TODO Roadmap (Updated Status)
 
@@ -141,17 +142,18 @@ Resolved since v2:
 - T-008 (important): Create docs/inputs.md describing required and optional manuscript metadata keys. Status: achieved [E-016].
 - T-009 (suggestion): Create docs/filters.md for Div classes and table-policy behavior. Status: achieved [E-017].
 - T-010 (suggestion): Create docs/troubleshooting.md for common render failures and remediation steps. Status: achieved with command-level playbooks and failure signatures [E-018] [E-019].
-- T-011 (important): Reduce runtime path-coupling drift risk between wrapper expectations and image layout. Status: open.
+- T-011 (important): Reduce runtime path-coupling drift risk between wrapper expectations and image layout. Status: achieved [E-020].
+- T-012 (important): Remove wrapper help heredoc dependency to reduce shell-policy fragility risk. Status: open.
 
 ## Natural Next Step
 
-- NEXT-008 (important): Harden runtime path-coupling between wrapper checks and container layout.
-  - why now: documentation coverage is broad, while the highest unresolved important risk remains path drift between Dockerfile and wrapper assumptions.
-  - expected impact: fewer runtime surprises caused by path mismatch and stronger confidence in release-time image integrity.
+- NEXT-009 (important): Remove wrapper help heredoc dependency in `bin/panpreposterous`.
+  - why now: path-coupling hardening is complete, and the top remaining important risk is shell-policy sensitivity around heredoc help emission.
+  - expected impact: lower shell-compatibility risk and cleaner wrapper behavior in stricter execution environments.
   - implementation sketch:
-    1. Centralize runtime asset paths via coordinated variables or generation flow shared by image build and wrapper.
-    2. Add an explicit CI assertion that required `/opt/panpreposterous/...` assets exist and are readable in the built image.
-    3. Document path contract ownership and failure signals in docs/runtime-assumptions.md.
+    1. Replace heredoc help block with a stable printf/cat-file approach that avoids multiline heredoc parsing dependency.
+    2. Add a lightweight CI check validating help output still includes expected sections after refactor.
+    3. Document the change in docs/runtime-assumptions.md and docs/troubleshooting.md where shell-behavior caveats are referenced.
 
 ## Validation Commands
 
@@ -202,6 +204,7 @@ test -s "$smoke_dir/smoke-render.pdf"
 - E-017: [docs/filters.md#L1](docs/filters.md#L1), [docs/filters.md#L96](docs/filters.md#L96), [docs/filters.md#L171](docs/filters.md#L171), [README.md#L270](README.md#L270), [docs/inputs.md#L130](docs/inputs.md#L130).
 - E-018: [docs/runtime-assumptions.md#L1](docs/runtime-assumptions.md#L1), [docs/runtime-assumptions.md#L22](docs/runtime-assumptions.md#L22), [docs/runtime-assumptions.md#L45](docs/runtime-assumptions.md#L45), [docs/troubleshooting.md#L1](docs/troubleshooting.md#L1), [README.md#L275](README.md#L275).
 - E-019: [docs/troubleshooting.md#L18](docs/troubleshooting.md#L18), [docs/troubleshooting.md#L22](docs/troubleshooting.md#L22), [docs/troubleshooting.md#L53](docs/troubleshooting.md#L53), [docs/troubleshooting.md#L75](docs/troubleshooting.md#L75), [docs/troubleshooting.md#L107](docs/troubleshooting.md#L107).
+- E-020: [bin/panpreposterous#L4](bin/panpreposterous#L4), [bin/panpreposterous#L8](bin/panpreposterous#L8), [Dockerfile#L14](Dockerfile#L14), [Dockerfile#L51](Dockerfile#L51), [.github/workflows/publish-image.yml#L44](.github/workflows/publish-image.yml#L44).
 
 ## Machine Summary JSON
 
@@ -209,22 +212,21 @@ test -s "$smoke_dir/smoke-render.pdf"
 {
   "anchor": {
     "name": "Panpreposterous Workspace Architecture Anchor",
-    "analysis_timestamp_utc": "2026-06-11T02:30:00Z",
+    "analysis_timestamp_utc": "2026-06-11T03:00:00Z",
     "analysis_depth": "deep",
     "reproducibility_focus": true,
     "deterministic_output": true,
-    "anchor_version": 9
+    "anchor_version": 10
   },
-  "achieved_since_v8": {
+  "achieved_since_v9": {
     "count": 1,
     "ids": [
-      "ACH-013"
+      "ACH-014"
     ]
   },
   "risks": {
-    "count": 3,
+    "count": 2,
     "important": [
-      "R-002",
       "R-004"
     ],
     "suggestion": [
@@ -233,7 +235,8 @@ test -s "$smoke_dir/smoke-render.pdf"
     "resolved_since_v2": [
       "R-001",
       "R-003",
-      "R-005"
+      "R-005",
+      "R-002"
     ]
   },
   "todo": {
@@ -247,16 +250,17 @@ test -s "$smoke_dir/smoke-render.pdf"
       "T-007",
       "T-008",
       "T-009",
-      "T-010"
+      "T-010",
+      "T-011"
     ],
     "open": [
-      "T-011"
+      "T-012"
     ],
     "partial": []
   },
-  "next_step": "NEXT-008",
+  "next_step": "NEXT-009",
   "evidence": {
-    "count": 19,
+    "count": 20,
     "ids": [
       "E-001",
       "E-002",
@@ -276,7 +280,8 @@ test -s "$smoke_dir/smoke-render.pdf"
       "E-016",
       "E-017",
       "E-018",
-      "E-019"
+      "E-019",
+      "E-020"
     ]
   }
 }

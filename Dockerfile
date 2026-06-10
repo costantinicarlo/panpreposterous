@@ -11,6 +11,12 @@ LABEL org.opencontainers.image.title="panpreposterous" \
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8
+ENV PANPREPOSTEROUS_ROOT=/opt/panpreposterous
+ENV PANPREPOSTEROUS_TEMPLATE_DIR=/opt/panpreposterous/template
+ENV PANPREPOSTEROUS_FILTERS_DIR=/opt/panpreposterous/filters
+ENV PANPREPOSTEROUS_TEMPLATE_PATH=/opt/panpreposterous/template/preprint_template_xe_citeproc.tex
+ENV PANPREPOSTEROUS_BACKMATTER_FILTER_PATH=/opt/panpreposterous/filters/backmatter.lua
+ENV PANPREPOSTEROUS_SUPPLEMENTARY_FILTER_PATH=/opt/panpreposterous/filters/supplementary.lua
 
 ARG TINYTEX_RELEASE=v2026.06
 ARG TINYTEX_ASSET=TinyTeX-linux-x86_64-v2026.06.tar.xz
@@ -42,12 +48,12 @@ RUN tlmgr install \
     latexmk
 
 WORKDIR /work
-COPY template /opt/panpreposterous/template
-COPY filters /opt/panpreposterous/filters
+COPY template ${PANPREPOSTEROUS_TEMPLATE_DIR}
+COPY filters ${PANPREPOSTEROUS_FILTERS_DIR}
 COPY bin/panpreposterous /usr/local/bin/panpreposterous
 RUN chmod +x /usr/local/bin/panpreposterous
 
 # Let TeX search the template dir (// = search subdirs; trailing : keeps defaults)
-ENV TEXINPUTS=/opt/panpreposterous/template//:
+ENV TEXINPUTS=${PANPREPOSTEROUS_TEMPLATE_DIR}//:
 
 CMD ["panpreposterous", "--help"]

@@ -31,6 +31,27 @@ Direct host execution outside the container is not the primary support model.
   - `/opt/panpreposterous/filters/backmatter.lua`
   - `/opt/panpreposterous/filters/supplementary.lua`
 
+Path contract ownership:
+
+- `Dockerfile` is the source-of-truth for runtime path environment variables:
+  - `PANPREPOSTEROUS_ROOT`
+  - `PANPREPOSTEROUS_TEMPLATE_DIR`
+  - `PANPREPOSTEROUS_FILTERS_DIR`
+  - `PANPREPOSTEROUS_TEMPLATE_PATH`
+  - `PANPREPOSTEROUS_BACKMATTER_FILTER_PATH`
+  - `PANPREPOSTEROUS_SUPPLEMENTARY_FILTER_PATH`
+- `bin/panpreposterous` consumes these variables and falls back to stable
+  defaults when unset.
+- CI validates readability of all required runtime assets inside the built
+  image before publish.
+
+Failure signals for path drift:
+
+- wrapper preflight emits one of:
+  - `required template not found or not readable`
+  - `required Lua filter not found or not readable`
+- CI fails in verify-build path validation if any required asset is unreadable.
+
 ## Font and TeX Toolchain Assumptions
 
 - PDF rendering depends on the container-bundled TinyTeX distribution and TeX

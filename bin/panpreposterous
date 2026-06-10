@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TEMPLATE_PATH="/opt/panpreposterous/template/preprint_template_xe_citeproc.tex"
-BACKMATTER_FILTER_PATH="/opt/panpreposterous/filters/backmatter.lua"
-SUPPLEMENTARY_FILTER_PATH="/opt/panpreposterous/filters/supplementary.lua"
+PANPREPOSTEROUS_ROOT="${PANPREPOSTEROUS_ROOT:-/opt/panpreposterous}"
+PANPREPOSTEROUS_TEMPLATE_DIR="${PANPREPOSTEROUS_TEMPLATE_DIR:-${PANPREPOSTEROUS_ROOT}/template}"
+PANPREPOSTEROUS_FILTERS_DIR="${PANPREPOSTEROUS_FILTERS_DIR:-${PANPREPOSTEROUS_ROOT}/filters}"
+
+TEMPLATE_PATH="${PANPREPOSTEROUS_TEMPLATE_PATH:-${PANPREPOSTEROUS_TEMPLATE_DIR}/preprint_template_xe_citeproc.tex}"
+BACKMATTER_FILTER_PATH="${PANPREPOSTEROUS_BACKMATTER_FILTER_PATH:-${PANPREPOSTEROUS_FILTERS_DIR}/backmatter.lua}"
+SUPPLEMENTARY_FILTER_PATH="${PANPREPOSTEROUS_SUPPLEMENTARY_FILTER_PATH:-${PANPREPOSTEROUS_FILTERS_DIR}/supplementary.lua}"
 
 if [[ "${1:-}" == "--help" || $# -lt 1 ]]; then
   cat <<EOF
@@ -13,8 +17,8 @@ Usage:
   panpreposterous INPUT.md [-o output.pdf] [--csl style.csl] [--bibliography refs.bib] [extra pandoc args...]
 
 Defaults:
-  template: /opt/panpreposterous/template/preprint_template_xe_citeproc.tex
-  filters : /opt/panpreposterous/filters/backmatter.lua, /opt/panpreposterous/filters/supplementary.lua
+  template: $TEMPLATE_PATH
+  filters : $BACKMATTER_FILTER_PATH, $SUPPLEMENTARY_FILTER_PATH
   engine  : xelatex
   citeproc: on
 
