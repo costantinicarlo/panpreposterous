@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+TEMPLATE_PATH="/opt/panpreposterous/template/preprint_template_xe_citeproc.tex"
+BACKMATTER_FILTER_PATH="/opt/panpreposterous/filters/backmatter.lua"
+SUPPLEMENTARY_FILTER_PATH="/opt/panpreposterous/filters/supplementary.lua"
+
 if [[ "${1:-}" == "--help" || $# -lt 1 ]]; then
   cat <<EOF
 Panpreposterous — build reproducible PDFs with Pandoc + XeLaTeX
@@ -30,10 +34,36 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [[ ! -r "$TEMPLATE_PATH" ]]; then
+  echo "Error: required template not found or not readable: $TEMPLATE_PATH" >&2
+  exit 1
+fi
+
+if [[ ! -r "$BACKMATTER_FILTER_PATH" ]]; then
+  echo "Error: required Lua filter not found or not readable: $BACKMATTER_FILTER_PATH" >&2
+  exit 1
+fi
+
+if [[ ! -r "$SUPPLEMENTARY_FILTER_PATH" ]]; then
+  echo "Error: required Lua filter not found or not readable: $SUPPLEMENTARY_FILTER_PATH" >&2
+  exit 1
+fi
+
+if [[ ${#args[@]} -lt 1 ]]; then
+  echo "Error: missing input manuscript file. Usage: panpreposterous INPUT.md [...]" >&2
+  exit 1
+fi
+
+input_file="${args[0]}"
+if [[ "$input_file" != "-" && ! -r "$input_file" ]]; then
+  echo "Error: input manuscript file not found or not readable: $input_file" >&2
+  exit 1
+fi
+
 pandoc "${args[@]}" \
-  --template=/opt/panpreposterous/template/preprint_template_xe_citeproc.tex \
-  --lua-filter=/opt/panpreposterous/filters/backmatter.lua \
-  --lua-filter=/opt/panpreposterous/filters/supplementary.lua \
+  --template="$TEMPLATE_PATH" \
+  --lua-filter="$BACKMATTER_FILTER_PATH" \
+  --lua-filter="$SUPPLEMENTARY_FILTER_PATH" \
   --pdf-engine=xelatex \
   --citeproc \
   -o "$out"
