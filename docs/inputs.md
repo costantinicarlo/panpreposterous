@@ -127,5 +127,6 @@ Before rendering:
 
 - Usage and quickstart: [README.md](../README.md)
 - Architecture and runtime contracts: [docs/architecture.md](architecture.md)
+- Filter behavior contracts: [docs/filters.md](filters.md)
 - Workspace status anchor:
   [docs/anchor/workspace-architecture-anchor.md](anchor/workspace-architecture-anchor.md)

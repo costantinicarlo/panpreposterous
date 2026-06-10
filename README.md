@@ -267,6 +267,9 @@ For complex tables, use a LaTeX table file and include it from Markdown:
 For a Markdown table that should appear as a one-column island, add the
 `.onecol` class. For a Markdown table that should render inline despite two-column mode, add `.allowmd`.
 
+For full filter behavior contracts and before/after examples, see
+[Filter Behavior Contract](docs/filters.md).
+
 ## Troubleshooting Quick Checks
 
 If Docker cannot find the image, pull the published image:
@@ -303,6 +306,8 @@ If figures do not appear:
 
 - Need the technical execution map:
   [Architecture Overview](docs/architecture.md)
+- Need filter behavior details:
+  [Filter Behavior Contract](docs/filters.md)
 - New to the workflow:
   [Tutorial: Produce a Complete Preprint/Postprint PDF](docs/tutorial-produce-complete-preprint-postprint-pdf.md)
 - Have your files ready:
