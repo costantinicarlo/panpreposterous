@@ -2,13 +2,13 @@
 
 ## Metadata
 
-- analysis_timestamp_utc: 2026-06-10T23:59:00Z
+- analysis_timestamp_utc: 2026-06-11T00:20:00Z
 - repository_root: /Users/carlocostantini/Dropbox/Macros, Scripts, Templates, Styles/LaTeX/panpreposterous
 - analysis_depth: deep
 - reproducibility_focus: true
 - deterministic_output: true
-- anchor_version: 3
-- supersedes: anchor_version 2 (2026-06-10)
+- anchor_version: 4
+- supersedes: anchor_version 3 (2026-06-10)
 
 ## Workspace Inventory
 
@@ -81,7 +81,7 @@ Layered model:
 
 - F-001: README.md defines the public contract as a reproducible container-first conversion pipeline from Markdown assets to PDF [E-001].
 - F-002: Dockerfile provisions Debian, Pandoc, TinyTeX, required TeX collections, runtime paths, and copied workspace assets under /opt/panpreposterous [E-002].
-- F-003: bin/panpreposterous performs argument pass-through with explicit default output handling and fixed Pandoc option set [E-003].
+- F-003: bin/panpreposterous performs argument pass-through, explicit startup checks for required runtime assets and input readability, and fixed Pandoc option set [E-003].
 - F-004: backmatter.lua enforces two-column table policy and supports Div contracts backmatter, onecol, wide, and texinclude [E-004].
 - F-005: supplementary.lua captures supplementary Div blocks and emits deferred supplementary material at document end, with generated lists and page-break control [E-007].
 - F-006: preprint_template_xe_citeproc.tex composes XeLaTeX behavior, CSL references balancing, side DOI rendering, first-page footer, running headers, and supplementary environment semantics [E-005].
@@ -108,11 +108,9 @@ Release path P-002 (container publication):
 3. publish job executes only if verify-build succeeds [E-011].
 4. Buildx pushes version and optional latest tags to Docker Hub [E-011].
 
-## Achieved Since Anchor v2
+## Achieved Since Anchor v3
 
-- ACH-005: TinyTeX install flow moved from remote installer piping to pinned release artifact + SHA256 verification in Dockerfile [E-002].
-- ACH-006: CI gate now validates full smoke path (build, help command, bundled example render, non-empty PDF artifact) before publish [E-011].
-- ACH-007: Non-rigid smoke-test policy is now explicitly documented, avoiding strict PDF hash/byte-size pinning for acceptable template evolution [E-012].
+- ACH-008: Wrapper startup now fails fast with actionable diagnostics when required template/filter files or the input manuscript are not readable [E-003].
 
 ## Gaps and Risks (Current)
 
@@ -129,7 +127,7 @@ Resolved since v2:
 ## TODO Roadmap (Updated Status)
 
 - T-001 (critical): Add installer integrity verification in Dockerfile and document provenance policy. Status: achieved [E-002] [E-012].
-- T-002 (important): Introduce startup checks in wrapper for template/filter presence and readable input file. Status: open.
+- T-002 (important): Introduce startup checks in wrapper for template/filter presence and readable input file. Status: achieved [E-003].
 - T-003 (important): Create minimal smoke-test example with bundled assets and expected output checksum strategy. Status: achieved with non-rigid policy exception (assets + smoke render present; strict checksum intentionally not required) [E-011] [E-012] [E-014].
 - T-004 (important): Add CI task for image build and panpreposterous --help verification. Status: achieved [E-011].
 - T-005 (suggestion): Add CI task for rendering smoke example and validating generated PDF presence. Status: achieved [E-011].
@@ -141,13 +139,13 @@ Resolved since v2:
 
 ## Natural Next Step
 
-- NEXT-002 (important): Introduce startup checks in bin/panpreposterous for required template/filter paths and readable input file.
-  - why now: after supply-chain and CI gating hardening, runtime fail-fast diagnostics are the highest-impact remaining reliability improvement.
-  - expected impact: reduce opaque failures and speed operator troubleshooting when image layout or input assumptions break.
+- NEXT-003 (important): Create docs/architecture.md summarizing subsystem boundaries and execution flow.
+  - why now: the runtime and release paths are now hardened, so codifying architecture contracts is the most effective way to reduce future drift while onboarding contributors.
+  - expected impact: improve maintainability, shorten troubleshooting time, and keep docs aligned with implemented runtime and CI behavior.
   - implementation sketch:
-    1. Add explicit path/readability assertions for `/opt/panpreposterous/template/preprint_template_xe_citeproc.tex` and both Lua filters.
-    2. Validate first non-option argument exists and is readable before invoking Pandoc.
-    3. Emit actionable stderr messages and non-zero exit codes before command execution.
+    1. Extract the layered model and architecture map from this anchor into docs/architecture.md with stable section anchors.
+    2. Add a short "critical runtime contracts" section covering wrapper path expectations, filter/template dependencies, and verify-build gate requirements.
+    3. Cross-link README.md and docs/release/container-image-lineage.md to docs/architecture.md as the technical map source.
 
 ## Validation Commands
 
@@ -181,7 +179,7 @@ test -s "$smoke_dir/smoke-render.pdf"
 
 - E-001: [README.md#L1](README.md#L1), [README.md#L58](README.md#L58), [README.md#L78](README.md#L78), [README.md#L110](README.md#L110), [README.md#L137](README.md#L137), [README.md#L164](README.md#L164), [README.md#L222](README.md#L222).
 - E-002: [Dockerfile#L15](Dockerfile#L15), [Dockerfile#L16](Dockerfile#L16), [Dockerfile#L17](Dockerfile#L17), [Dockerfile#L24](Dockerfile#L24), [Dockerfile#L26](Dockerfile#L26), [Dockerfile#L28](Dockerfile#L28), [Dockerfile#L35](Dockerfile#L35), [Dockerfile#L44](Dockerfile#L44), [Dockerfile#L50](Dockerfile#L50).
-- E-003: [bin/panpreposterous#L2](bin/panpreposterous#L2), [bin/panpreposterous#L4](bin/panpreposterous#L4), [bin/panpreposterous#L5](bin/panpreposterous#L5), [bin/panpreposterous#L23](bin/panpreposterous#L23), [bin/panpreposterous#L33](bin/panpreposterous#L33).
+- E-003: [bin/panpreposterous#L2](bin/panpreposterous#L2), [bin/panpreposterous#L4](bin/panpreposterous#L4), [bin/panpreposterous#L37](bin/panpreposterous#L37), [bin/panpreposterous#L52](bin/panpreposterous#L52), [bin/panpreposterous#L63](bin/panpreposterous#L63).
 - E-004: [filters/backmatter.lua#L2](filters/backmatter.lua#L2), [filters/backmatter.lua#L38](filters/backmatter.lua#L38), [filters/backmatter.lua#L51](filters/backmatter.lua#L51), [filters/backmatter.lua#L90](filters/backmatter.lua#L90), [filters/backmatter.lua#L103](filters/backmatter.lua#L103).
 - E-005: [template/preprint_template_xe_citeproc.tex#L4](template/preprint_template_xe_citeproc.tex#L4), [template/preprint_template_xe_citeproc.tex#L68](template/preprint_template_xe_citeproc.tex#L68), [template/preprint_template_xe_citeproc.tex#L95](template/preprint_template_xe_citeproc.tex#L95), [template/preprint_template_xe_citeproc.tex#L209](template/preprint_template_xe_citeproc.tex#L209).
 - E-006: [template/panpreprint_1-0.sty#L1](template/panpreprint_1-0.sty#L1), [template/panpreprint_1-0.sty#L33](template/panpreprint_1-0.sty#L33), [template/panpreprint_1-0.sty#L87](template/panpreprint_1-0.sty#L87), [template/panpreprint_1-0.sty#L169](template/panpreprint_1-0.sty#L169).
@@ -200,18 +198,16 @@ test -s "$smoke_dir/smoke-render.pdf"
 {
   "anchor": {
     "name": "Panpreposterous Workspace Architecture Anchor",
-    "analysis_timestamp_utc": "2026-06-10T23:59:00Z",
+    "analysis_timestamp_utc": "2026-06-11T00:20:00Z",
     "analysis_depth": "deep",
     "reproducibility_focus": true,
     "deterministic_output": true,
-    "anchor_version": 3
+    "anchor_version": 4
   },
-  "achieved_since_v2": {
-    "count": 3,
+  "achieved_since_v3": {
+    "count": 1,
     "ids": [
-      "ACH-005",
-      "ACH-006",
-      "ACH-007"
+      "ACH-008"
     ]
   },
   "risks": {
@@ -232,12 +228,12 @@ test -s "$smoke_dir/smoke-render.pdf"
   "todo": {
     "achieved": [
       "T-001",
+      "T-002",
       "T-003",
       "T-004",
       "T-005"
     ],
     "open": [
-      "T-002",
       "T-006",
       "T-007",
       "T-008",
@@ -247,7 +243,7 @@ test -s "$smoke_dir/smoke-render.pdf"
       "T-010"
     ]
   },
-  "next_step": "NEXT-002",
+  "next_step": "NEXT-003",
   "evidence": {
     "count": 14,
     "ids": [
