@@ -117,7 +117,6 @@ Release path P-002 (container publication):
 ## Gaps and Risks (Current)
 
 - R-002 (important): Runtime still depends on absolute in-container paths across Dockerfile and wrapper script; drift can still cause hard failures [E-002] [E-003].
-- R-003 (important): Release governance docs still contain state tension: lineage markdown reports Phase 2 completed while baseline JSON note still says "until Phase 2 comparison is complete" [E-012] [E-013].
 - R-004 (important): Wrapper help continues to rely on heredoc emission; valid in runtime shell, but can be sensitive in stricter shell-policy environments [E-003].
 - R-006 (suggestion): scripts/, tests/lineage-fixture/, and tmp/lineage-check/ remain structurally present but unpopulated with tracked automation assets.
 
@@ -125,6 +124,7 @@ Resolved since v2:
 
 - R-001 resolved: TinyTeX provenance now pinned and checksum-verified in Dockerfile [E-002].
 - R-005 resolved: repository automation now validates render path through smoke test before publish [E-011].
+- R-003 resolved: release-state semantics now align between lineage markdown and machine baseline JSON [E-012] [E-013].
 
 ## TODO Roadmap (Updated Status)
 
@@ -141,13 +141,13 @@ Resolved since v2:
 
 ## Natural Next Step
 
-- NEXT-001 (important): Reconcile release-state semantics between docs/release/container-image-lineage.md and docs/release/legacy-image-baseline.json so both sources state the same Phase 2 completion posture.
-  - why now: this is the highest-impact remaining governance inconsistency after hardening and CI gate completion.
-  - expected impact: remove operator ambiguity during release decisions and onboarding.
+- NEXT-002 (important): Introduce startup checks in bin/panpreposterous for required template/filter paths and readable input file.
+  - why now: after supply-chain and CI gating hardening, runtime fail-fast diagnostics are the highest-impact remaining reliability improvement.
+  - expected impact: reduce opaque failures and speed operator troubleshooting when image layout or input assumptions break.
   - implementation sketch:
-    1. Update legacy-image-baseline.json notes and/or status fields to explicitly acknowledge Phase 2 completion.
-    2. Add a small "last_verified_phase" field in JSON for machine-readable automation.
-    3. Add a one-line cross-reference in container-image-lineage.md stating JSON is the machine source of truth for phase state.
+    1. Add explicit path/readability assertions for `/opt/panpreposterous/template/preprint_template_xe_citeproc.tex` and both Lua filters.
+    2. Validate first non-option argument exists and is readable before invoking Pandoc.
+    3. Emit actionable stderr messages and non-zero exit codes before command execution.
 
 ## Validation Commands
 
@@ -191,7 +191,7 @@ test -s "$smoke_dir/smoke-render.pdf"
 - E-010: [panpreposterous.code-workspace#L2](panpreposterous.code-workspace#L2), [panpreposterous.code-workspace#L7](panpreposterous.code-workspace#L7), [panpreposterous.code-workspace#L10](panpreposterous.code-workspace#L10), [panpreposterous.code-workspace#L13](panpreposterous.code-workspace#L13).
 - E-011: [.github/workflows/publish-image.yml#L26](.github/workflows/publish-image.yml#L26), [.github/workflows/publish-image.yml#L32](.github/workflows/publish-image.yml#L32), [.github/workflows/publish-image.yml#L38](.github/workflows/publish-image.yml#L38), [.github/workflows/publish-image.yml#L44](.github/workflows/publish-image.yml#L44), [.github/workflows/publish-image.yml#L54](.github/workflows/publish-image.yml#L54), [.github/workflows/publish-image.yml#L56](.github/workflows/publish-image.yml#L56), [.github/workflows/publish-image.yml#L59](.github/workflows/publish-image.yml#L59), [.github/workflows/publish-image.yml#L115](.github/workflows/publish-image.yml#L115).
 - E-012: [docs/release/container-image-lineage.md#L59](docs/release/container-image-lineage.md#L59), [docs/release/container-image-lineage.md#L77](docs/release/container-image-lineage.md#L77), [docs/release/container-image-lineage.md#L86](docs/release/container-image-lineage.md#L86), [docs/release/container-image-lineage.md#L97](docs/release/container-image-lineage.md#L97), [docs/release/container-image-lineage.md#L109](docs/release/container-image-lineage.md#L109).
-- E-013: [docs/release/legacy-image-baseline.json#L7](docs/release/legacy-image-baseline.json#L7), [docs/release/legacy-image-baseline.json#L13](docs/release/legacy-image-baseline.json#L13), [docs/release/legacy-image-baseline.json#L15](docs/release/legacy-image-baseline.json#L15).
+- E-013: [docs/release/legacy-image-baseline.json#L7](docs/release/legacy-image-baseline.json#L7), [docs/release/legacy-image-baseline.json#L8](docs/release/legacy-image-baseline.json#L8), [docs/release/legacy-image-baseline.json#L9](docs/release/legacy-image-baseline.json#L9), [docs/release/legacy-image-baseline.json#L17](docs/release/legacy-image-baseline.json#L17), [docs/release/legacy-image-baseline.json#L19](docs/release/legacy-image-baseline.json#L19).
 - E-014: [examples/README.md#L1](examples/README.md#L1), [examples/README.md#L6](examples/README.md#L6), [examples/README.md#L12](examples/README.md#L12), [examples/README.md#L26](examples/README.md#L26), [examples/README.md#L33](examples/README.md#L33).
 
 ## Machine Summary JSON
@@ -215,10 +215,9 @@ test -s "$smoke_dir/smoke-render.pdf"
     ]
   },
   "risks": {
-    "count": 4,
+    "count": 3,
     "important": [
       "R-002",
-      "R-003",
       "R-004"
     ],
     "suggestion": [
@@ -226,6 +225,7 @@ test -s "$smoke_dir/smoke-render.pdf"
     ],
     "resolved_since_v2": [
       "R-001",
+      "R-003",
       "R-005"
     ]
   },
@@ -247,7 +247,7 @@ test -s "$smoke_dir/smoke-render.pdf"
       "T-010"
     ]
   },
-  "next_step": "NEXT-001",
+  "next_step": "NEXT-002",
   "evidence": {
     "count": 14,
     "ids": [

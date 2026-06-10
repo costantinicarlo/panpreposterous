@@ -136,5 +136,12 @@ Rules:
 
 The next published image must use a new version tag after Phase 2, not `1.0`.
 
+Phase-state source of truth:
+
+- Machine-readable phase status is authoritative in
+  [docs/release/legacy-image-baseline.json](legacy-image-baseline.json).
+- This markdown file is the human-readable narrative and must stay aligned with
+  that JSON state.
+
 The machine-readable baseline for later automation is in
 [docs/release/legacy-image-baseline.json](legacy-image-baseline.json).

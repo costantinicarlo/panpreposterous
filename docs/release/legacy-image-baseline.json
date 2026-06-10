@@ -4,6 +4,9 @@
   "digest": "sha256:437794f73a4a88162c0ae90cd8e48a0fcca5c11d41f045f6aa22b7236164b5be",
   "platform": "linux/amd64",
   "last_pushed_utc": "2025-11-26T14:40:50.471969105Z",
+  "last_verified_phase": "phase-2-complete",
+  "phase_2_completed": true,
+  "phase_2_verified_utc": "2026-06-10T00:00:00Z",
   "status": "frozen-legacy-baseline",
   "policy": {
     "retag_legacy": false,
@@ -12,6 +15,7 @@
   },
   "notes": [
     "This image predates the current tracked workspace state.",
-    "Treat tag 1.0 as immutable historical output until Phase 2 comparison is complete."
+    "Treat tag 1.0 as immutable historical output.",
+    "Phase 2 comparison was completed and validated as acceptable drift."
   ]
 }
