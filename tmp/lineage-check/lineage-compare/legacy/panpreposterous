@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${1:-}" == "--help" || $# -lt 1 ]]; then
+  cat <<EOF
+Panpreposterous — build reproducible PDFs with Pandoc + XeLaTeX
+
+Usage:
+  panpreposterous INPUT.md [-o output.pdf] [--csl style.csl] [--bibliography refs.bib] [extra pandoc args...]
+
+Defaults:
+  template: /opt/panpreposterous/template/preprint_template_xe_citeproc.tex
+  filters : /opt/panpreposterous/filters/backmatter.lua, /opt/panpreposterous/filters/supplementary.lua
+  engine  : xelatex
+  citeproc: on
+
+Example:
+  panpreposterous manuscript.md --bibliography refs.bib --csl journal.csl -o manuscript.pdf
+EOF
+  exit 0
+fi
+
+# Find output option or set default
+out="output.pdf"
+args=()
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -o|--output) out="$2"; shift 2;;
+    *) args+=("$1"); shift;;
+  esac
+done
+
+pandoc "${args[@]}" \
+  --template=/opt/panpreposterous/template/preprint_template_xe_citeproc.tex \
+  --lua-filter=/opt/panpreposterous/filters/backmatter.lua \
+  --lua-filter=/opt/panpreposterous/filters/supplementary.lua \
+  --pdf-engine=xelatex \
+  --citeproc \
+  -o "$out"

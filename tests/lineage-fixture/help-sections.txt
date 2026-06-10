@@ -1,0 +1,4 @@
+# Expected section headings from bin/panpreposterous --help
+Usage:
+Defaults:
+Example:

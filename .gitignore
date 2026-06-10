@@ -23,3 +23,17 @@
 *.swp
 *.tmp
 tmp/
+!tmp/
+tmp/*
+!tmp/lineage-check/
+tmp/lineage-check/*
+!tmp/lineage-check/README.md
+!tmp/lineage-check/.gitkeep
+!tmp/lineage-check/lineage-compare/
+tmp/lineage-check/lineage-compare/*
+!tmp/lineage-check/lineage-compare/candidate/
+!tmp/lineage-check/lineage-compare/candidate/.gitkeep
+!tmp/lineage-check/lineage-compare/legacy/
+!tmp/lineage-check/lineage-compare/legacy/.gitkeep
+!tmp/lineage-check/lineage-compare/reports/
+!tmp/lineage-check/lineage-compare/reports/.gitkeep

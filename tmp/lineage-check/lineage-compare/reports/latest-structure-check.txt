@@ -1,0 +1,3 @@
+lineage scaffold check: ok
+timestamp_utc=2026-06-10T12:20:27Z
+repo_root=/Users/carlocostantini/Dropbox/Macros, Scripts, Templates, Styles/LaTeX/panpreposterous

@@ -1,0 +1,4 @@
+# Repo-relative asset paths required by runtime wrapper defaults
+template/preprint_template_xe_citeproc.tex
+filters/backmatter.lua
+filters/supplementary.lua

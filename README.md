@@ -329,6 +329,19 @@ If figures do not appear:
 
 ## Maintainer Notes
 
+Local lineage scaffold check:
+
+```bash
+scripts/verify-lineage-scaffold.sh
+```
+
+This command validates repository fixture structure used by lineage checks and
+writes a local status report under
+`tmp/lineage-check/lineage-compare/reports/latest-structure-check.txt`.
+
+Scaffold ownership and tracking rules are documented in
+[tmp/lineage-check/README.md](tmp/lineage-check/README.md).
+
 The public container image is published at:
 
 - <https://hub.docker.com/r/costantinicarlo/panpreposterous>

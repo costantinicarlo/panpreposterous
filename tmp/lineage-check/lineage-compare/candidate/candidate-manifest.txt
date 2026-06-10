@@ -1,0 +1,5 @@
+1d97d67050dba503d50b2fef5883308f83d0cb4cf46b2fbbfd00fa0bbc283f7d  ./filters/backmatter.lua
+dd810207738485a5a8162460c7aa315a159784ca651ce4b9f5e59bac200f496b  ./filters/supplementary.lua
+2eeab3aab9dcf759a9f15215c400a7dba3646b4a786ba21a9dca6ce1b510bafd  ./panpreposterous
+04271875e0e6d53e27394752ba494525c6a84bb8439d37d93acdce8d241ecf67  ./template/panpreprint_1-0.sty
+eeb15061c8a0974ef590d07360165d891f8af5f8f35473a0bf4f0bdcee1008e8  ./template/preprint_template_xe_citeproc.tex

@@ -1,0 +1,3 @@
+file: candidate.pdf
+sha256: 33a1efcd02839c49fef32af5da98d4d584e3deab864e8394d378c7dcbacece02
+bytes: 19427

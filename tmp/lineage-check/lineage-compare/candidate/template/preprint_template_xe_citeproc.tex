@@ -1,0 +1,332 @@
+% preprint_template_xe_citeproc_v7-32.tex
+\documentclass[11pt]{article}
+
+\usepackage{panpreprint_1-0}
+
+$if(xetex)$
+  \usepackage{fontspec}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+  $if(mainfont)$\setmainfont{$mainfont$}$else$\setmainfont{TeX Gyre Termes}$endif$
+  $if(sansfont)$\setsansfont{$sansfont$}$endif$
+  $if(monofont)$\setmonofont{$monofont$}$endif$
+$else$
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+$endif$
+
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[dvipsnames]{xcolor} % dvipsnames for Sepia etc.
+\usepackage{amsmath, amsfonts, amssymb, amsthm}
+\usepackage[unicode]{hyperref}
+\usepackage{ragged2e}
+\usepackage{caption}
+
+% ---- Pandoc helper fallback ----
+\providecommand{\pandocbounded}[1]{#1}
+
+% ---- Global safe image scaling (width-only, keeps aspect ratio) ----
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth \linewidth \else \Gin@nat@width \fi}
+\makeatother
+\setkeys{Gin}{width=\maxwidth,keepaspectratio}
+
+% Unicode fallbacks
+\usepackage{newunicodechar}
+\newunicodechar{–}{\textendash}
+\newunicodechar{—}{\textemdash}
+\newunicodechar{’}{'}
+\newunicodechar{“}{``}
+\newunicodechar{”}{''}
+
+% Floats
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{dblfloatfix}
+
+% Tables
+\usepackage{longtable}
+\usepackage{array}
+
+% Full-width blocks
+\usepackage{cuted}
+\newenvironment{wideblock}{\begin{strip}}{\end{strip}}
+
+% Lists
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% Float tuning
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.8}
+
+% Pandoc citeproc / CSL
+\providecommand{\citeproc}[2]{#2}
+\providecommand{\citeproctext}{}
+
+\newlength{\cslhangindent}\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}\setlength{\csllabelwidth}{3em}
+
+\newcommand{\CSLEntrySpacingExtra}{0}
+$if(csl_entry_spacing_extra)$
+  \renewcommand{\CSLEntrySpacingExtra}{$csl_entry_spacing_extra$}
+$endif$
+
+\newenvironment{CSLReferences}[2]{%
+  \begingroup
+  \renewcommand{\bibitem}[2][]{}
+  \setlength{\parindent}{0pt}%
+  \setlength{\leftskip}{0pt}%
+  \setlength{\parskip}{#2\baselineskip}%
+  \addtolength{\parskip}{\CSLEntrySpacingExtra\baselineskip}%
+  \def\CSLIndentParam{#1}%
+}{\par\endgroup}
+
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\dimexpr\linewidth-\csllabelwidth\relax}{#1}}
+\newcommand{\CSLIndent}[1]{\hspace{\dimexpr\CSLIndentParam\cslhangindent\relax}#1}
+
+% Balance last two-column page (e.g., references)
+\usepackage{etoolbox}
+\usepackage{balance}
+\makeatletter
+\AtBeginEnvironment{CSLReferences}{\if@twocolumn\balance\fi}
+\makeatother
+
+% Backmatter
+\makeatletter
+\newenvironment{backmatter}{%
+  \begingroup
+  \let\bm@normalsize\normalsize
+  \renewcommand\normalsize{\footnotesize}
+  \footnotesize
+  \setlength{\parskip}{0.45\baselineskip}%
+}{\par\endgroup}
+\makeatother
+
+% ORCID (optional)
+\makeatletter
+\@ifpackageloaded{orcidlink}{}{%
+  \IfFileExists{orcidlink.sty}{\usepackage{orcidlink}}{}%
+}
+\makeatother
+
+% ===== Side-margin DOIs (faded, unified orientation, nudged outward) =====
+\usepackage{tikz}
+\newcommand{\LeftDOI}{}
+\newcommand{\RightDOI}{}
+\newcommand{\SetPublishedDOI}[2]{%
+  \renewcommand{\LeftDOI}{\small\ttfamily
+    \if\relax\detokenize{#1}\relax
+      \href{https://doi.org/#2}{\texttt{\detokenize{#2}}}%
+    \else
+      \textbf{#1: }\,\href{https://doi.org/#2}{\texttt{\detokenize{#2}}}%
+    \fi}}
+\newcommand{\SetPreprintDOI}[2]{%
+  \renewcommand{\RightDOI}{\small\ttfamily
+    \if\relax\detokenize{#1}\relax
+      \href{https://doi.org/#2}{\texttt{\detokenize{#2}}}%
+    \else
+      \textbf{#1: }\,\href{https://doi.org/#2}{\texttt{\detokenize{#2}}}%
+    \fi}}
+\newif\ifPrintDOIs
+\PrintDOIsfalse
+$if(published_doi)$\SetPublishedDOI{$published_doi_label$}{$published_doi$}\PrintDOIstrue$endif$
+$if(preprint_doi)$\SetPreprintDOI{$preprint_doi_label$}{$preprint_doi$}\PrintDOIstrue$endif$
+\newif\ifDOIhookAdded \DOIhookAddedfalse
+
+% User-tunable styling via YAML (with defaults)
+\newcommand{\SideDOIColor}{Sepia}
+$if(side_doi_color)$\renewcommand{\SideDOIColor}{$side_doi_color$}$endif$
+\newcommand{\SideDOIOpacity}{0.6}
+$if(side_doi_opacity)$\renewcommand{\SideDOIOpacity}{$side_doi_opacity$}$endif$
+\newcommand{\SideDOIShift}{1.6cm}
+$if(side_doi_shift)$\renewcommand{\SideDOIShift}{$side_doi_shift$}$endif$
+\newcommand{\SideDOIRotation}{90} % 90 = bottom-to-top for both sides
+$if(side_doi_rotation)$\renewcommand{\SideDOIRotation}{$side_doi_rotation$}$endif$
+
+\newcommand{\PrintSideDOIs}{%
+  \ifPrintDOIs \ifDOIhookAdded\else
+    \AddToHook{shipout/foreground}{%
+      \begin{tikzpicture}[remember picture,overlay]
+        % Left side (west)
+        \node[rotate=\SideDOIRotation,anchor=center,text=\SideDOIColor,text opacity=\SideDOIOpacity]
+             at ([xshift=\SideDOIShift]current page.west) {\LeftDOI};
+        % Right side (east) -- same rotation to unify reading direction
+        \node[rotate=\SideDOIRotation,anchor=center,text=\SideDOIColor,text opacity=\SideDOIOpacity]
+             at ([xshift=-\SideDOIShift]current page.east) {\RightDOI};
+      \end{tikzpicture}%
+    }%
+    \DOIhookAddedtrue
+  \fi \fi
+}
+
+% ===== Running header =====
+\usepackage{fancyhdr}
+\makeatletter
+\newcommand{\DocVersionLabel}{Preprint}
+$if(doc_version)$\renewcommand{\DocVersionLabel}{$doc_version$}$endif$
+$if(doc_version_label)$\renewcommand{\DocVersionLabel}{$doc_version_label$}$endif$
+\newcommand{\RunningTitleFallback}{\@title}
+\makeatother
+\newcommand{\RunningTitle}{$if(running_title)$$running_title$$else$\RunningTitleFallback$endif$}
+\fancypagestyle{fancy}{%
+  \fancyhf{}%
+  \fancyheadoffset{0pt}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \fancyhead[L]{\scshape \DocVersionLabel{} -- \RunningTitle}%
+  \fancyhead[R]{\thepage}%
+}
+\pagestyle{fancy}
+
+% ===== First-page footer (no header on page 1) =====
+$if(correspondence)$
+\newcommand{\CorrespondenceText}{\footnotesize \textit{* Correspondence: } $for(correspondence)$$correspondence$$sep$; $endfor$}
+\fancypagestyle{firstpage}{%
+  \fancyhf{}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \fancyfoot[L]{%
+    \begin{minipage}[t]{\textwidth}
+      \vspace{0.35\baselineskip}\hrule
+      \vspace{0.25\baselineskip}
+      {\footnotesize\raggedright \CorrespondenceText\par}
+    \end{minipage}
+  }%
+}
+$else$
+\fancypagestyle{firstpage}{%
+  \fancyhf{}%
+  \renewcommand{\headrulewidth}{0pt}%
+}
+$endif$
+
+% ===== Supplementary Materials (env only; emission deferred by Lua filter) =====
+\newcommand{\SupplementaryHeaderLabel}{Supplementary Materials}
+\newenvironment{supplementary}{%
+  \clearpage
+  \FloatBarrier
+  \onecolumn
+  \setcounter{figure}{0}\setcounter{table}{0}%
+  \renewcommand{\thefigure}{S\arabic{figure}}%
+  \renewcommand{\thetable}{S\arabic{table}}%
+  \captionsetup[figure]{name=Supplementary Figure}%
+  \captionsetup[table]{name=Supplementary Table}%
+  \section*{\SupplementaryHeaderLabel}%
+  \suppressfloats[t]%
+}{}
+
+% Title / Authors
+\title{$title$}
+
+\author{%
+\begin{minipage}{\preblockwidth}\centering
+$for(author)$
+  \textbf{$author.name$}%
+  $if(author.orcid)$\textsuperscript{\normalfont\footnotesize%
+    \ifdefined\orcidlink \orcidlink{$author.orcid$}%
+    \else \href{https://orcid.org/$author.orcid$}{ORCID}\fi}\kern0.08em$endif$%
+  $if(author.affiliation)$\textsuperscript{\textup{$for(author.affiliation)$$author.affiliation$$sep$,$endfor$}}$endif$%
+  $if(author.notes)$\textsuperscript{\textup{$for(author.notes)$$author.notes$$sep$,$endfor$}}$endif$%
+  $if(author.corresponding)$\textsuperscript{\normalfont *}$endif$%
+  $sep$,\,%
+$endfor$
+\end{minipage}
+}
+
+\date{$if(date)$$date$$else$\today$endif$}
+
+\begin{document}
+
+\newlength{\preblockwidth}
+\setlength{\preblockwidth}{\dimexpr\textwidth - 2\leftmargini\relax}
+
+\PrintSideDOIs
+
+$if(twocolumn)$
+\twocolumn[%
+\maketitle
+
+$if(affiliations)$
+\begin{center}
+$for(affiliations)$\textsuperscript{$affiliations.id$} $affiliations.name$$sep$ \\
+$endfor$
+\end{center}
+$endif$
+
+% Author notes
+$if(author_notes)$
+\begin{center}
+\begin{minipage}{\preblockwidth}
+\small\RaggedRight\setlength{\parindent}{0pt}
+$for(author_notes)$\textsuperscript{$author_notes.mark$} $author_notes.text$\par
+$endfor$
+\end{minipage}
+\end{center}
+$endif$
+
+% Abstract
+$if(abstract)$
+\begin{abstract}
+$abstract$
+\end{abstract}
+$endif$
+
+% Keywords
+$if(keywords)$
+\begin{quotation}\small
+\noindent\textbf{Keywords:} $for(keywords)$$keywords$$sep$, $endfor$
+\end{quotation}
+$endif$
+
+\vspace{1.0\baselineskip}
+% Apply the first-page footer style on page 1 (no header)
+\thispagestyle{firstpage}
+]
+$else$
+\maketitle
+% Apply the first-page footer style on page 1 (no header)
+\thispagestyle{firstpage}
+
+$if(affiliations)$
+\begin{center}
+$for(affiliations)$\textsuperscript{$affiliations.id$} $affiliations.name$$sep$ \\
+$endfor$
+\end{center}
+$endif$
+
+% Author notes
+$if(author_notes)$
+\begin{center}
+\begin{minipage}{\preblockwidth}
+\small\RaggedRight\setlength{\parindent}{0pt}
+$for(author_notes)$\textsuperscript{$author_notes.mark$} $author_notes.text$\par
+$endfor$
+\end{minipage}
+\end{center}
+$endif$
+
+% Abstract
+$if(abstract)$
+\begin{abstract}
+$abstract$
+\end{abstract}
+$endif$
+
+% Keywords
+$if(keywords)$
+\begin{quotation}\small
+\noindent\textbf{Keywords:} $for(keywords)$$keywords$$sep$, $endfor$
+\end{quotation}
+$endif$
+$endif$
+
+% Body
+$body$
+
+\end{document}

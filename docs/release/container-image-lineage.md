@@ -85,6 +85,12 @@ Build integrity is enforced before publish by the `verify-build` job, which:
 - renders the bundled example into a temporary workspace and verifies the PDF
   artifact is produced
 
+Local baseline scaffold verification is also available through:
+
+- script: [scripts/verify-lineage-scaffold.sh](../../scripts/verify-lineage-scaffold.sh)
+- fixtures: [tests/lineage-fixture/README.md](../../tests/lineage-fixture/README.md)
+- workspace contract: [tmp/lineage-check/README.md](../../tmp/lineage-check/README.md)
+
 The publish job runs only if `verify-build` succeeds.
 
 ## Non-Rigid Smoke-Test Policy
