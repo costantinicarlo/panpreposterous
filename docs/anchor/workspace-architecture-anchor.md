@@ -2,13 +2,13 @@
 
 ## Metadata
 
-- analysis_timestamp_utc: 2026-06-11T02:05:00Z
+- analysis_timestamp_utc: 2026-06-11T02:30:00Z
 - repository_root: /Users/carlocostantini/Dropbox/Macros, Scripts, Templates, Styles/LaTeX/panpreposterous
 - analysis_depth: deep
 - reproducibility_focus: true
 - deterministic_output: true
-- anchor_version: 8
-- supersedes: anchor_version 7 (2026-06-11)
+- anchor_version: 9
+- supersedes: anchor_version 8 (2026-06-11)
 
 ## Workspace Inventory
 
@@ -80,6 +80,7 @@ Layered model:
 - Input contract documentation layer: docs/inputs.md defines required and optional manuscript metadata keys and validation checklist [E-016].
 - Filter behavior documentation layer: docs/filters.md defines class contracts, table-policy overrides, and supplementary behavior expectations [E-017].
 - Runtime assumptions documentation layer: docs/runtime-assumptions.md and docs/troubleshooting.md define environment constraints and symptom-based diagnostics [E-018].
+- Troubleshooting playbook layer: docs/troubleshooting.md now includes command-level validation paths with expected outputs and failure signatures [E-019].
 
 ## Component Responsibilities
 
@@ -112,9 +113,9 @@ Release path P-002 (container publication):
 3. publish job executes only if verify-build succeeds [E-011].
 4. Buildx pushes version and optional latest tags to Docker Hub [E-011].
 
-## Achieved Since Anchor v7
+## Achieved Since Anchor v8
 
-- ACH-012: Runtime assumptions are now documented and cross-linked from README quick checks and troubleshooting guidance [E-001] [E-018].
+- ACH-013: Troubleshooting guidance now includes command-first playbooks for pull/build, wrapper preflight, smoke render, and symptom branching [E-018] [E-019].
 
 ## Gaps and Risks (Current)
 
@@ -139,17 +140,18 @@ Resolved since v2:
 - T-007 (important): Create docs/architecture.md summarizing subsystem boundaries and execution flow. Status: achieved [E-015].
 - T-008 (important): Create docs/inputs.md describing required and optional manuscript metadata keys. Status: achieved [E-016].
 - T-009 (suggestion): Create docs/filters.md for Div classes and table-policy behavior. Status: achieved [E-017].
-- T-010 (suggestion): Create docs/troubleshooting.md for common render failures and remediation steps. Status: partially achieved via expanded README plus dedicated troubleshooting and runtime-assumptions docs [E-001] [E-018].
+- T-010 (suggestion): Create docs/troubleshooting.md for common render failures and remediation steps. Status: achieved with command-level playbooks and failure signatures [E-018] [E-019].
+- T-011 (important): Reduce runtime path-coupling drift risk between wrapper expectations and image layout. Status: open.
 
 ## Natural Next Step
 
-- NEXT-007 (suggestion): Consolidate troubleshooting playbooks into command-level validation paths.
-  - why now: environment assumptions are now explicit, so the next leverage point is turning troubleshooting guidance into reproducible command sequences.
-  - expected impact: shorter support loops and more consistent triage outcomes across contributors.
+- NEXT-008 (important): Harden runtime path-coupling between wrapper checks and container layout.
+  - why now: documentation coverage is broad, while the highest unresolved important risk remains path drift between Dockerfile and wrapper assumptions.
+  - expected impact: fewer runtime surprises caused by path mismatch and stronger confidence in release-time image integrity.
   - implementation sketch:
-    1. Add command-first troubleshooting recipes for image pull/build, wrapper preflight, and smoke render checks.
-    2. Add expected outputs and failure signatures per recipe for faster branch-and-bound debugging.
-    3. Link each recipe to related assumptions in docs/runtime-assumptions.md.
+    1. Centralize runtime asset paths via coordinated variables or generation flow shared by image build and wrapper.
+    2. Add an explicit CI assertion that required `/opt/panpreposterous/...` assets exist and are readable in the built image.
+    3. Document path contract ownership and failure signals in docs/runtime-assumptions.md.
 
 ## Validation Commands
 
@@ -199,6 +201,7 @@ test -s "$smoke_dir/smoke-render.pdf"
 - E-016: [docs/inputs.md#L1](docs/inputs.md#L1), [docs/inputs.md#L24](docs/inputs.md#L24), [docs/inputs.md#L67](docs/inputs.md#L67), [README.md#L213](README.md#L213), [docs/anchor/workspace-architecture-anchor.md#L138](docs/anchor/workspace-architecture-anchor.md#L138).
 - E-017: [docs/filters.md#L1](docs/filters.md#L1), [docs/filters.md#L96](docs/filters.md#L96), [docs/filters.md#L171](docs/filters.md#L171), [README.md#L270](README.md#L270), [docs/inputs.md#L130](docs/inputs.md#L130).
 - E-018: [docs/runtime-assumptions.md#L1](docs/runtime-assumptions.md#L1), [docs/runtime-assumptions.md#L22](docs/runtime-assumptions.md#L22), [docs/runtime-assumptions.md#L45](docs/runtime-assumptions.md#L45), [docs/troubleshooting.md#L1](docs/troubleshooting.md#L1), [README.md#L275](README.md#L275).
+- E-019: [docs/troubleshooting.md#L18](docs/troubleshooting.md#L18), [docs/troubleshooting.md#L22](docs/troubleshooting.md#L22), [docs/troubleshooting.md#L53](docs/troubleshooting.md#L53), [docs/troubleshooting.md#L75](docs/troubleshooting.md#L75), [docs/troubleshooting.md#L107](docs/troubleshooting.md#L107).
 
 ## Machine Summary JSON
 
@@ -206,16 +209,16 @@ test -s "$smoke_dir/smoke-render.pdf"
 {
   "anchor": {
     "name": "Panpreposterous Workspace Architecture Anchor",
-    "analysis_timestamp_utc": "2026-06-11T02:05:00Z",
+    "analysis_timestamp_utc": "2026-06-11T02:30:00Z",
     "analysis_depth": "deep",
     "reproducibility_focus": true,
     "deterministic_output": true,
-    "anchor_version": 8
+    "anchor_version": 9
   },
-  "achieved_since_v7": {
+  "achieved_since_v8": {
     "count": 1,
     "ids": [
-      "ACH-012"
+      "ACH-013"
     ]
   },
   "risks": {
@@ -243,16 +246,17 @@ test -s "$smoke_dir/smoke-render.pdf"
       "T-006",
       "T-007",
       "T-008",
-      "T-009"
-    ],
-    "open": [],
-    "partial": [
+      "T-009",
       "T-010"
-    ]
+    ],
+    "open": [
+      "T-011"
+    ],
+    "partial": []
   },
-  "next_step": "NEXT-007",
+  "next_step": "NEXT-008",
   "evidence": {
-    "count": 18,
+    "count": 19,
     "ids": [
       "E-001",
       "E-002",
@@ -271,7 +275,8 @@ test -s "$smoke_dir/smoke-render.pdf"
       "E-015",
       "E-016",
       "E-017",
-      "E-018"
+      "E-018",
+      "E-019"
     ]
   }
 }
