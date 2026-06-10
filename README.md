@@ -78,7 +78,7 @@ Use the Docker Hub image for ordinary manuscript builds. Build locally when you 
 Build integrity notes:
 
 - The image build pins a specific TinyTeX release artifact and verifies its SHA256 checksum in `Dockerfile` before extraction.
-- Container publication runs through a workflow guardrail that verifies a clean build and executes `panpreposterous --help` before any push step.
+- Container publication runs through a workflow guardrail that verifies a clean build, executes `panpreposterous --help`, and renders the bundled example before any push step.
 
 ## Try the Bundled Example
 

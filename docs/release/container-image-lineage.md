@@ -78,6 +78,8 @@ Build integrity is enforced before publish by the `verify-build` job, which:
 
 - builds the container from the tracked [Dockerfile](../../Dockerfile)
 - runs `panpreposterous --help` in the built image as a minimum runtime check
+- renders the bundled example into a temporary workspace and verifies the PDF
+  artifact is produced
 
 The publish job runs only if `verify-build` succeeds.
 
