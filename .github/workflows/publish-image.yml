@@ -56,27 +56,48 @@ jobs:
   verify-build:
     if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            arch: amd64
+          - platform: linux/arm64
+            arch: arm64
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+        with:
+          cache-image: false
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v4
 
       - name: Build verification image
         shell: bash
         run: |
           set -euo pipefail
-          docker build -t panpreposterous:ci-verify -f Dockerfile .
+          docker buildx build \
+            --platform "${{ matrix.platform }}" \
+            --load \
+            -t "panpreposterous:ci-verify-${{ matrix.arch }}" \
+            -f Dockerfile \
+            .
 
       - name: Verify wrapper help
         shell: bash
         run: |
           set -euo pipefail
-          docker run --rm panpreposterous:ci-verify panpreposterous --help
+          docker run --rm --platform "${{ matrix.platform }}" "panpreposterous:ci-verify-${{ matrix.arch }}" panpreposterous --help
 
       - name: Verify help sections
         shell: bash
         run: |
           set -euo pipefail
-          help_output="$(docker run --rm panpreposterous:ci-verify panpreposterous --help)"
+          help_output="$(docker run --rm --platform "${{ matrix.platform }}" "panpreposterous:ci-verify-${{ matrix.arch }}" panpreposterous --help)"
           printf '%s\n' "$help_output" | grep -q '^Usage:'
           printf '%s\n' "$help_output" | grep -q '^Defaults:'
           printf '%s\n' "$help_output" | grep -q '^Example:'
@@ -85,7 +106,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          docker run --rm panpreposterous:ci-verify sh -lc '
+          docker run --rm --platform "${{ matrix.platform }}" "panpreposterous:ci-verify-${{ matrix.arch }}" sh -lc '
             set -eu
             test -r "$PANPREPOSTEROUS_TEMPLATE_PATH"
             test -r "$PANPREPOSTEROUS_BACKMATTER_FILTER_PATH"
@@ -102,7 +123,7 @@ jobs:
           cp examples/journal.csl "$smoke_dir"/
           cp -R examples/figs "$smoke_dir"/
           cp -R examples/tables "$smoke_dir"/
-          docker run --rm -v "$smoke_dir":/work panpreposterous:ci-verify \
+          docker run --rm --platform "${{ matrix.platform }}" -v "$smoke_dir":/work "panpreposterous:ci-verify-${{ matrix.arch }}" \
             panpreposterous manuscript.md --bibliography references.bib --csl journal.csl -o smoke-render.pdf
           test -s "$smoke_dir/smoke-render.pdf"
 
@@ -169,7 +190,7 @@ jobs:
         with:
           context: .
           file: Dockerfile
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

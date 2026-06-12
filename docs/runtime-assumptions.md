@@ -88,6 +88,10 @@ when visual rendering is acceptable:
 Panpreposterous release gating is intentionally structural and does not require
 strict byte-for-byte PDF identity.
 
+For multi-architecture container releases (`linux/amd64` and `linux/arm64`),
+byte-level PDF identity is not expected across architectures. Structural smoke
+tests in CI are the authoritative release gate.
+
 ## Determinism Non-Goals
 
 Out of scope for strict guarantees:

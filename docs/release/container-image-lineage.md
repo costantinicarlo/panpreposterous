@@ -135,8 +135,33 @@ Current policy requirements:
 The pinned values are maintained in [Dockerfile](../../Dockerfile) via:
 
 - `TINYTEX_RELEASE`
-- `TINYTEX_ASSET`
-- `TINYTEX_SHA256`
+- architecture-aware selection based on `TARGETARCH`
+- per-architecture pinned asset and SHA256 mapping for:
+  - `linux/amd64` -> `TinyTeX-linux-x86_64-v2026.06.tar.xz`
+  - `linux/arm64` -> `TinyTeX-linux-arm64-v2026.06.tar.xz`
+
+Unsupported architecture values fail the image build explicitly.
+
+## Multi-Arch Image Policy
+
+Container publish policy now targets both supported Linux platforms in a single
+manifest list:
+
+- `linux/amd64`
+- `linux/arm64`
+
+Policy constraints:
+
+- never reuse Docker Hub tag `1.0`
+- publish a new semantic version tag for each release line update
+- optionally update `latest` from the same verified release workflow
+
+Verification gate before publish is platform-specific and must pass for both
+architectures:
+
+- `panpreposterous --help`
+- runtime asset path readability checks
+- bundled example render with non-empty PDF output
 
 Rules:
 

@@ -67,6 +67,11 @@ To use the published image, pull it once:
 docker pull costantinicarlo/panpreposterous:latest
 ```
 
+Published image platform support:
+
+- `linux/amd64`
+- `linux/arm64`
+
 You can also build the image locally from the Panpreposterous repository root:
 
 ```bash
@@ -77,8 +82,9 @@ Use the Docker Hub image for ordinary manuscript builds. Build locally when you 
 
 Build integrity notes:
 
-- The image build pins a specific TinyTeX release artifact and verifies its SHA256 checksum in `Dockerfile` before extraction.
-- Container publication runs through a workflow guardrail that verifies a clean build, executes `panpreposterous --help`, and renders the bundled example before any push step.
+- The image build pins the TinyTeX release and maps architecture-specific assets for `linux/amd64` and `linux/arm64` with SHA256 verification in `Dockerfile` before extraction.
+- Container publication runs through a workflow guardrail that verifies each supported platform, executes `panpreposterous --help`, checks runtime asset paths, and renders the bundled example before any push step.
+- Legacy Docker Hub tag `1.0` remains frozen and is never reused.
 
 ## Try the Bundled Example
 

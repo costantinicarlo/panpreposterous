@@ -19,8 +19,7 @@ ENV PANPREPOSTEROUS_BACKMATTER_FILTER_PATH=/opt/panpreposterous/filters/backmatt
 ENV PANPREPOSTEROUS_SUPPLEMENTARY_FILTER_PATH=/opt/panpreposterous/filters/supplementary.lua
 
 ARG TINYTEX_RELEASE=v2026.06
-ARG TINYTEX_ASSET=TinyTeX-linux-x86_64-v2026.06.tar.xz
-ARG TINYTEX_SHA256=e3352310ff6d1dbe0b4531c3d4559950f5a40b66498a7612aac855d06d02ec64
+ARG TARGETARCH
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl xz-utils perl fontconfig libfontconfig1 \
@@ -29,9 +28,27 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install TinyTeX from a pinned release artifact and verify its SHA256 checksum.
 RUN /bin/bash -lc 'set -euo pipefail; \
-    tinytex_url="https://github.com/rstudio/tinytex-releases/releases/download/${TINYTEX_RELEASE}/${TINYTEX_ASSET}"; \
+        target_arch="${TARGETARCH:-}"; \
+        if [[ -z "$target_arch" ]]; then \
+            target_arch="$(dpkg --print-architecture)"; \
+        fi; \
+        case "$target_arch" in \
+            amd64) \
+                tinytex_asset="TinyTeX-linux-x86_64-${TINYTEX_RELEASE}.tar.xz"; \
+                tinytex_sha256="e3352310ff6d1dbe0b4531c3d4559950f5a40b66498a7612aac855d06d02ec64"; \
+                ;; \
+            arm64) \
+                tinytex_asset="TinyTeX-linux-arm64-${TINYTEX_RELEASE}.tar.xz"; \
+                tinytex_sha256="c1de2da2783fe628656fd4da104459f8026d3eb1b8428b676ad814b018e55845"; \
+                ;; \
+            *) \
+                echo "Unsupported TARGETARCH: $target_arch. Supported values: amd64, arm64" >&2; \
+                exit 1; \
+                ;; \
+        esac; \
+        tinytex_url="https://github.com/rstudio/tinytex-releases/releases/download/${TINYTEX_RELEASE}/${tinytex_asset}"; \
     curl -fsSL "$tinytex_url" -o /tmp/tinytex.tar.xz; \
-    echo "${TINYTEX_SHA256}  /tmp/tinytex.tar.xz" | sha256sum -c -; \
+        echo "${tinytex_sha256}  /tmp/tinytex.tar.xz" | sha256sum -c -; \
     tar -xJf /tmp/tinytex.tar.xz -C /root; \
     rm -f /tmp/tinytex.tar.xz; \
     tinytex_bin="$(find /root/.TinyTeX/bin -mindepth 1 -maxdepth 1 -type d | head -n 1)"; \

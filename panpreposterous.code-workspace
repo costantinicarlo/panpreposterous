@@ -4,13 +4,16 @@
 			"path": "."
 		},
 		{
-			"path": "../../../../Local Documents/Obsidian/Academia/OPERATIONS/Projects/panpreposterous"
-		},
-		{
 			"path": "../preprint_template.tex"
 		},
 		{
-			"path": "../panpreposterous-article"
+			"path": "../panpreposterous-vignette"
+		},
+		{
+			"path": "../../../../../../Local Documents/Academia/PROJECTS/panpreposterous"
+		},
+		{
+			"path": "../../../../../../Local Documents/Academia/KNOWLEDGE/Writings/04_Manuscripts/panpreposterous-article"
 		}
 	]
 }
