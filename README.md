@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/panpreposterous_logo_alpha.png"
+  <img src="assets/panpreposterous_logo_hex.png"
        alt="panpreposterous logo"
        width="420">
 </p>
