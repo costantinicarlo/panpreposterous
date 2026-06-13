@@ -3,6 +3,7 @@
 
 # Editor/IDE
 .vscode/
+*.code-workspace
 
 # TeX and LaTeX intermediates
 *.aux
