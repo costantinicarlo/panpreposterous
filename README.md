@@ -1,3 +1,9 @@
+<p align="center">
+  <img src="assets/panpreposterous_logo_alpha.png"
+       alt="panpreposterous logo"
+       width="420">
+</p>
+
 # Panpreposterous
 
 Panpreposterous is a containerized command-line application for turning Markdown manuscripts into reproducible preprint and postprint PDFs.
