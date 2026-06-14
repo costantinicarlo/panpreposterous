@@ -40,6 +40,16 @@ Methods text. This section also includes a \LaTeX table block.
 
 Results text.
 
+::: {#tbl:fullwidth-example .fullwidth placement="tb"}
+| Analysis stage | Markdown-first workflow | Raw-LaTeX fallback |
+| --- | --- | --- |
+| Authoring | Keep wide prose tables in the manuscript source. | Maintain a separate `table*` environment by hand. |
+| Layout | Float the table across both columns near its reference. | Tune placement in raw TeX for each manuscript. |
+| Wrapped cells | Use ragged-right fixed-width columns when Pandoc supplies widths. | Add `>{\raggedright\arraybackslash}p{...}` manually. |
+
+Table: **Full-width Markdown table example.** The `.fullwidth` contract renders this table as a two-column `table*` float.
+:::
+
 ![Main figure](figs/fig1.svg){#fig:main width=0.9\\columnwidth}
 
 # Discussion

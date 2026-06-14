@@ -276,8 +276,26 @@ For complex tables, use a LaTeX table file and include it from Markdown:
 :::
 ````
 
-For a Markdown table that should appear as a one-column island, add the
-`.onecol` class. For a Markdown table that should render inline despite two-column mode, add `.allowmd`.
+For a Markdown table that should span both columns and float with surrounding
+text, wrap it in `.fullwidth`. The aliases `.widetable` and `.starred` are also
+accepted, and the optional `placement` attribute controls the LaTeX float
+placement, defaulting to `t`:
+
+````markdown
+::: {#tbl:wide-example .fullwidth placement="tb"}
+| Design choice | Markdown-first path | Raw-LaTeX fallback |
+| --- | --- | --- |
+| Wide prose table | Floats across both columns | Author-maintained `table*` block |
+| Cell wrapping | Ragged-right fixed-width columns | Manual column specification |
+
+Table: **Wide table example.** A full-width Markdown table.
+:::
+````
+
+Fixed-width table columns are rendered ragged-right by default so wrapped cell
+prose is not justified. For a Markdown table that should appear as a
+one-column island, add the `.onecol` class. For a Markdown table that should
+render inline despite two-column mode, add `.allowmd`.
 
 For full filter behavior contracts and before/after examples, see
 [Filter Behavior Contract](docs/filters.md).

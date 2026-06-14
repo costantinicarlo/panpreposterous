@@ -152,6 +152,33 @@ After (conceptual):
 - renders the table
 - emits `\twocolumn`
 
+### Override: full-width floating markdown table
+
+Add `.fullwidth` to render a markdown table as a two-column `table*` float.
+The aliases `.widetable` and `.starred` are also accepted. Use the optional
+`placement` attribute to choose the LaTeX float placement; it defaults to `t`.
+
+Before:
+
+````markdown
+::: {#tbl:wide-example .fullwidth placement="tb"}
+| Design choice | Markdown-first path | Raw-LaTeX fallback |
+| --- | --- | --- |
+| Wide prose table | Floats across both columns | Author-maintained `table*` block |
+| Cell wrapping | Ragged-right fixed-width columns | Manual column specification |
+
+Table: **Wide table example.** A full-width Markdown table.
+:::
+````
+
+After (conceptual):
+
+- emits `\begin{table*}[tb]`
+- preserves the table caption and wrapper id as the LaTeX caption and label
+- renders fixed-width `p{}` columns as ragged-right columns using
+  `>{\raggedright\arraybackslash}p{...}`
+- emits `\end{table*}`
+
 ### YAML override key
 
 You can override strict suppression with YAML metadata:
@@ -206,7 +233,9 @@ LaTeX float blocks):
 
 ## Authoring Recommendations
 
-- In two-column manuscripts, prefer TeX include tables for complex layouts.
+- In two-column manuscripts, prefer `.fullwidth` for wide markdown tables that
+  should float across both columns.
+- Prefer TeX include tables for complex custom layouts.
 - Use `.onecol` for tables that must remain markdown but need readability.
 - Use `.allowmd` sparingly, only when inline two-column rendering is acceptable.
 - Keep supplementary figures and tables inside a single `supplementary` block.
