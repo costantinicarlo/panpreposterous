@@ -1,12 +1,13 @@
 
--- backmatter.lua (v3): strict two-column policy for Markdown tables
+-- backmatter.lua (v4): strict two-column policy for Markdown tables
 -- Features:
 --  - Div.backmatter (optionally .onecol) -> LaTeX backmatter env (+ optional one/two column toggle)
 --  - Div.wide -> full-width block using \begin{wideblock}...\end{wideblock}
 --  - Div.onecol -> temporary one-column island, then back to two columns
 --  - Div.texinclude with attribute src -> emits \input{<src>}
 --  - Table: in twocolumn mode, Markdown tables are SUPPRESSED by default unless
---           they carry class .allowmd (render inline) or .onecol (auto-wrap island).
+--           they carry class .allowmd (render inline), .onecol (auto-wrap island),
+--           or .fullwidth/.widetable/.starred (render as table* float).
 
 local is_twocolumn = false
 local forbid_md_tables = false  -- default; will set true when twocolumn unless overridden in YAML
@@ -16,6 +17,149 @@ local function has_class(el, class)
     if c == class then return true end
   end
   return false
+end
+
+local function has_any_class(el, classes)
+  for _, class in ipairs(classes) do
+    if has_class(el, class) then return true end
+  end
+  return false
+end
+
+local function strip_trailing_space(s)
+  return (s or ''):gsub('%s+$', '')
+end
+
+local function latex_for_blocks(blocks)
+  if not blocks or #blocks == 0 then return '' end
+  local latex = pandoc.write(pandoc.Pandoc(blocks), 'latex')
+  latex = strip_trailing_space(latex)
+  latex = latex:gsub('\n\n+', '\\\\ ')
+  latex = latex:gsub('\n', ' ')
+  return latex
+end
+
+local function caption_blocks(caption)
+  if not caption then return {} end
+  if caption.long then return caption.long end
+  return caption
+end
+
+local function table_identifier(tbl, fallback_attr)
+  local attr = tbl.attr or {}
+  if attr.identifier and attr.identifier ~= '' then return attr.identifier end
+  if fallback_attr and fallback_attr.identifier and fallback_attr.identifier ~= '' then
+    return fallback_attr.identifier
+  end
+  return nil
+end
+
+local function column_width_value(width)
+  if type(width) == 'number' then return width end
+  if type(width) == 'table' then
+    if width.t == 'ColWidth' then return width.c end
+    if width[1] then return column_width_value(width[1]) end
+  end
+  return nil
+end
+
+local function column_spec(align, width)
+  local width_value = column_width_value(width)
+  if width_value and width_value > 0 then
+    return string.format('>{\\raggedright\\arraybackslash}p{%.3f\\linewidth}', width_value)
+  end
+
+  if align == 'AlignRight' then return 'r' end
+  if align == 'AlignCenter' then return 'c' end
+  return 'l'
+end
+
+local function table_colspecs(tbl)
+  local specs = {}
+  for _, colspec in ipairs(tbl.colspecs or {}) do
+    table.insert(specs, column_spec(colspec[1], colspec[2]))
+  end
+  return table.concat(specs, '')
+end
+
+local function cell_latex(cell)
+  return latex_for_blocks(cell.contents or cell.content or {})
+end
+
+local function row_latex(row)
+  local cells = {}
+  for _, cell in ipairs(row.cells or {}) do
+    table.insert(cells, cell_latex(cell))
+  end
+  return table.concat(cells, ' & ') .. ' \\\\'
+end
+
+local function rows_from_head(head)
+  return (head and head.rows) or {}
+end
+
+local function rows_from_body(body)
+  return (body and body.body) or (body and body.rows) or {}
+end
+
+local function render_fullwidth_table(tbl, wrapper_attr)
+  local placement = 't'
+  local attrs = {}
+  if wrapper_attr and wrapper_attr.attributes then
+    for k, v in pairs(wrapper_attr.attributes) do attrs[k] = v end
+  end
+  if tbl.attributes then
+    for k, v in pairs(tbl.attributes) do attrs[k] = v end
+  end
+  if attrs.placement and attrs.placement ~= '' then placement = attrs.placement end
+
+  local id = table_identifier(tbl, wrapper_attr)
+  local colspec = table_colspecs(tbl)
+  if colspec == '' then colspec = 'l' end
+
+  local lines = {
+    '\\begin{table*}[' .. placement .. ']',
+    '\\centering'
+  }
+
+  local caption = latex_for_blocks(caption_blocks(tbl.caption))
+  if caption ~= '' then
+    table.insert(lines, '\\caption{' .. caption .. '}')
+  end
+  if id then
+    table.insert(lines, '\\label{' .. id .. '}')
+  end
+
+  table.insert(lines, '\\begin{tabular}{@{}' .. colspec .. '@{}}')
+  table.insert(lines, '\\toprule')
+
+  local head_rows = rows_from_head(tbl.head)
+  for _, row in ipairs(head_rows) do
+    table.insert(lines, row_latex(row))
+  end
+  if #head_rows > 0 then
+    table.insert(lines, '\\midrule')
+  end
+
+  for _, body in ipairs(tbl.bodies or {}) do
+    for _, row in ipairs(rows_from_body(body)) do
+      table.insert(lines, row_latex(row))
+    end
+  end
+
+  local foot_rows = rows_from_head(tbl.foot)
+  if #foot_rows > 0 then
+    table.insert(lines, '\\midrule')
+    for _, row in ipairs(foot_rows) do
+      table.insert(lines, row_latex(row))
+    end
+  end
+
+  table.insert(lines, '\\bottomrule')
+  table.insert(lines, '\\end{tabular}')
+  table.insert(lines, '\\end{table*}')
+
+  return { pandoc.RawBlock('latex', table.concat(lines, '\n')) }
 end
 
 local function meta_bool(m, key, default)
@@ -49,6 +193,36 @@ function Meta(m)
 end
 
 function Div(el)
+  -- Supplementary content is handled by supplementary.lua; do not apply the
+  -- two-column table suppression policy inside it.
+  if has_class(el, 'supplementary') then
+    return el, false
+  end
+
+  -- Full-width table float: ::: {.fullwidth placement="tb"} <markdown table> :::
+  if has_any_class(el, { 'fullwidth', 'widetable', 'starred' }) then
+    if #el.content == 1 and el.content[1].t == 'Table' then
+      return render_fullwidth_table(el.content[1], el.attr)
+    end
+  end
+
+  -- Allow the documented Div wrapper style to bypass table suppression.
+  if has_class(el, 'allowmd') then
+    if #el.content == 1 and el.content[1].t == 'Table' then
+      return el.content
+    end
+  end
+
+  -- Long markdown tables keep the historical one-column island behavior.
+  if has_any_class(el, { 'long', 'longtable' }) then
+    if #el.content == 1 and el.content[1].t == 'Table' then
+      local blocks = { pandoc.RawBlock('latex', '\\onecolumn') }
+      for _, b in ipairs(el.content) do table.insert(blocks, b) end
+      table.insert(blocks, pandoc.RawBlock('latex', '\\twocolumn'))
+      return blocks
+    end
+  end
+
   -- Backmatter (optionally onecol)
   if has_class(el, 'backmatter') then
     local begin = '\\begin{backmatter}'
@@ -90,9 +264,13 @@ end
 function Table(tbl)
   -- Strict policy in two-column mode: suppress Markdown tables unless allowed
   local allow_inline = has_class(tbl, 'allowmd')
-  local force_onecol = has_class(tbl, 'onecol') or has_class(tbl, 'long') or has_class(tbl, 'longtable') or has_class(tbl, 'fullwidth')
+  local force_fullwidth = has_any_class(tbl, { 'fullwidth', 'widetable', 'starred' })
+  local force_onecol = has_class(tbl, 'onecol') or has_class(tbl, 'long') or has_class(tbl, 'longtable')
 
   if is_twocolumn then
+    if force_fullwidth then
+      return render_fullwidth_table(tbl)
+    end
     if force_onecol then
       return {
         pandoc.RawBlock('latex', '\\onecolumn'),
@@ -104,8 +282,9 @@ function Table(tbl)
       -- Visible warning box in the PDF to catch unintended Markdown tables
       local msg = '\\begin{center}\\fbox{\\parbox{.9\\linewidth}{\\textit{Markdown table suppressed in two-column layout.}\\\\' ..
                   'Use class \\texttt{.onecol} to render as a one-column island, ' ..
+                  '\\texttt{.fullwidth} for a two-column float, ' ..
                   'or convert to LaTeX and include via \\texttt{\\input\\{...\\}}.}}\\end{center}'
-      io.stderr:write('[backmatter.lua] Suppressed a Markdown table in two-column mode. Add {.onecol} or {.allowmd} to override.\\n')
+      io.stderr:write('[backmatter.lua] Suppressed a Markdown table in two-column mode. Add {.onecol}, {.fullwidth}, or {.allowmd} to override.\n')
       return { pandoc.RawBlock('latex', msg) }
     end
   end
@@ -113,3 +292,8 @@ function Table(tbl)
   -- Default: render table normally
   return nil
 end
+
+return {
+  { Meta = Meta },
+  { traverse = 'topdown', Div = Div, Table = Table }
+}
