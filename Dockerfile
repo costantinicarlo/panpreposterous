@@ -17,6 +17,7 @@ ENV PANPREPOSTEROUS_FILTERS_DIR=/opt/panpreposterous/filters
 ENV PANPREPOSTEROUS_TEMPLATE_PATH=/opt/panpreposterous/template/preprint_template_xe_citeproc.tex
 ENV PANPREPOSTEROUS_BACKMATTER_FILTER_PATH=/opt/panpreposterous/filters/backmatter.lua
 ENV PANPREPOSTEROUS_SUPPLEMENTARY_FILTER_PATH=/opt/panpreposterous/filters/supplementary.lua
+ENV PANPREPOSTEROUS_MERMAID_FILTER_PATH=/opt/panpreposterous/filters/mermaid.lua
 
 ARG TINYTEX_RELEASE=v2026.06
 ARG TARGETARCH
@@ -24,7 +25,11 @@ ARG TARGETARCH
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl xz-utils perl fontconfig libfontconfig1 \
     make git pandoc librsvg2-bin \
+    nodejs npm \
  && rm -rf /var/lib/apt/lists/*
+
+# Install mermaid-cli globally for Mermaid diagram rendering
+RUN npm install -g @mermaid-js/mermaid-cli@10.6.1 && npm cache clean --force
 
 # Install TinyTeX from a pinned release artifact and verify its SHA256 checksum.
 RUN /bin/bash -lc 'set -euo pipefail; \

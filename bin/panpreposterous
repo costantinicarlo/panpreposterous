@@ -8,6 +8,7 @@ PANPREPOSTEROUS_FILTERS_DIR="${PANPREPOSTEROUS_FILTERS_DIR:-${PANPREPOSTEROUS_RO
 TEMPLATE_PATH="${PANPREPOSTEROUS_TEMPLATE_PATH:-${PANPREPOSTEROUS_TEMPLATE_DIR}/preprint_template_xe_citeproc.tex}"
 BACKMATTER_FILTER_PATH="${PANPREPOSTEROUS_BACKMATTER_FILTER_PATH:-${PANPREPOSTEROUS_FILTERS_DIR}/backmatter.lua}"
 SUPPLEMENTARY_FILTER_PATH="${PANPREPOSTEROUS_SUPPLEMENTARY_FILTER_PATH:-${PANPREPOSTEROUS_FILTERS_DIR}/supplementary.lua}"
+MERMAID_FILTER_PATH="${PANPREPOSTEROUS_MERMAID_FILTER_PATH:-${PANPREPOSTEROUS_FILTERS_DIR}/mermaid.lua}"
 
 print_help() {
   printf '%s\n' \
@@ -18,7 +19,7 @@ print_help() {
     "" \
     "Defaults:" \
     "  template: $TEMPLATE_PATH" \
-    "  filters : $BACKMATTER_FILTER_PATH, $SUPPLEMENTARY_FILTER_PATH" \
+    "  filters : $MERMAID_FILTER_PATH, $BACKMATTER_FILTER_PATH, $SUPPLEMENTARY_FILTER_PATH" \
     "  engine  : xelatex" \
     "  citeproc: on" \
     "" \
@@ -56,6 +57,11 @@ if [[ ! -r "$SUPPLEMENTARY_FILTER_PATH" ]]; then
   exit 1
 fi
 
+if [[ ! -r "$MERMAID_FILTER_PATH" ]]; then
+  echo "Error: required Lua filter not found or not readable: $MERMAID_FILTER_PATH" >&2
+  exit 1
+fi
+
 if [[ ${#args[@]} -lt 1 ]]; then
   echo "Error: missing input manuscript file. Usage: panpreposterous INPUT.md [...]" >&2
   exit 1
@@ -69,6 +75,7 @@ fi
 
 pandoc "${args[@]}" \
   --template="$TEMPLATE_PATH" \
+  --lua-filter="$MERMAID_FILTER_PATH" \
   --lua-filter="$BACKMATTER_FILTER_PATH" \
   --lua-filter="$SUPPLEMENTARY_FILTER_PATH" \
   --pdf-engine=xelatex \
