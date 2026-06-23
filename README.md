@@ -34,6 +34,10 @@ article/
 
 The build runs inside a Docker container so the Pandoc, XeLaTeX, template, Lua filters, and TeX packages are kept together in one reproducible environment.
 
+Mermaid code blocks are rendered automatically through a Lua filter. Diagrams
+are converted to vector assets during the build and included as regular figure
+floats in the final PDF.
+
 ## Who It Is For
 
 Use Panpreposterous if you want to:
@@ -146,10 +150,14 @@ You can pass extra Pandoc arguments after the manuscript file. The wrapper keeps
 - Template:
   `/opt/panpreposterous/template/preprint_template_xe_citeproc.tex`
 - Lua filters:
+  `/opt/panpreposterous/filters/mermaid.lua`,
   `/opt/panpreposterous/filters/backmatter.lua`
   and `/opt/panpreposterous/filters/supplementary.lua`
 - PDF engine: `xelatex`
 - Citation processing: enabled with `--citeproc`
+
+For Mermaid authoring and layout controls, see
+[docs/diagrams.md](docs/diagrams.md).
 
 ## Recommended Article Folder Layout
 

@@ -113,6 +113,37 @@ These are structural manuscript requirements outside YAML metadata:
   sections.
 - Use `::: supplementary` for deferred supplementary content.
 
+## Mermaid Diagram Blocks
+
+Mermaid diagrams are supported through fenced code blocks using the `mermaid`
+language identifier.
+
+Basic example:
+
+````markdown
+```mermaid
+flowchart TD
+  Start([Start]) --> Check{Valid?}
+  Check -->|Yes| Done([Done])
+  Check -->|No| Retry([Retry])
+```
+````
+
+Optional attributes can be provided on the code block to control rendering and
+LaTeX float behavior:
+
+- `caption`: figure caption text.
+- `label`: LaTeX label for cross-references, for example `fig:workflow`.
+- `width`: override figure width used by `\includegraphics`.
+- `max-height`: cap rendered figure height.
+- `placement`: float placement hint, for example `!htbp`.
+- `height`: pixel height passed to Mermaid CLI renderer.
+- `bg-color`: Mermaid render background, default `transparent`.
+
+In two-column mode (`twocolumn: true`), Mermaid blocks with classes
+`.fullwidth`, `.wide`, `.widetable`, or `.starred` are emitted as `figure*`
+floats.
+
 ## Validation Checklist
 
 Before rendering:
@@ -128,5 +159,6 @@ Before rendering:
 - Usage and quickstart: [README.md](../README.md)
 - Architecture and runtime contracts: [docs/architecture.md](architecture.md)
 - Filter behavior contracts: [docs/filters.md](filters.md)
+- Diagram authoring guide: [docs/diagrams.md](diagrams.md)
 - Workspace status anchor:
   [docs/anchor/workspace-architecture-anchor.md](anchor/workspace-architecture-anchor.md)
