@@ -17,11 +17,19 @@ local sha256 = function(s)
 end
 
 local MERMAID_CACHE_DIR = '/tmp/panpreposterous_mermaid'
-local MERMAID_DEFAULT_WIDTH = '0.9\\columnwidth'
+local MERMAID_DEFAULT_WIDTH = '0.9\\linewidth'
+local MERMAID_DEFAULT_MAX_HEIGHT = '0.35\\textheight'
 local MERMAID_DEFAULT_HEIGHT = '768'
+local MERMAID_DEFAULT_FLOAT_PLACEMENT = '!htbp'
+local MERMAID_TWOCOL_WIDTH = '0.95\\columnwidth'
+local MERMAID_TWOCOL_MAX_HEIGHT = '0.30\\textheight'
+local MERMAID_TWOCOL_WIDE_WIDTH = '0.95\\textwidth'
+local MERMAID_TWOCOL_WIDE_MAX_HEIGHT = '0.42\\textheight'
+local MERMAID_TWOCOL_WIDE_PLACEMENT = '!t'
 local MERMAID_PUPPETEER_CONFIG_PATH =
   os.getenv('PANPREPOSTEROUS_MERMAID_PUPPETEER_CONFIG_PATH')
   or '/opt/panpreposterous/template/mermaid-puppeteer-config.json'
+local is_twocolumn = false
 
 local function file_exists(path)
   local f = io.open(path, 'r')
@@ -44,9 +52,39 @@ local function has_class(el, class)
   return false
 end
 
+local function has_any_class(el, classes)
+  for _, class in ipairs(classes) do
+    if has_class(el, class) then return true end
+  end
+  return false
+end
+
 local function get_attr_value(el, key)
   if not el.attributes then return nil end
   return el.attributes[key]
+end
+
+local function meta_bool(m, key, default)
+  local v = m[key]
+  if v == nil then return default end
+  local vt = type(v)
+  if vt == 'boolean' then return v end
+  if vt == 'string' then
+    local s = v:lower()
+    if s == 'true' then return true end
+    if s == 'false' then return false end
+    return default
+  end
+  if vt == 'table' and v.t == 'MetaBool' then
+    return v.c
+  end
+  if pandoc and pandoc.utils and pandoc.utils.type then
+    local ptype = pandoc.utils.type(v)
+    if ptype == 'MetaBool' then
+      return v.c
+    end
+  end
+  return default
 end
 
 local function render_mermaid_to_pdf(source, config)
@@ -130,14 +168,20 @@ local function create_figure_from_pdf(pdf_path, config)
   local caption = config.caption or ''
   local label = config.label or ''
   local width = config.width or MERMAID_DEFAULT_WIDTH
+  local max_height = config.max_height or MERMAID_DEFAULT_MAX_HEIGHT
+  local placement = config.placement or MERMAID_DEFAULT_FLOAT_PLACEMENT
+  local figure_env = config.figure_env or 'figure'
 
   local figure_lines = {
-    '\\begin{figure}[htbp]',
+    '\\begin{' .. figure_env .. '}[' .. placement .. ']',
     '\\centering',
   }
 
   if file_exists(pdf_path) then
-    table.insert(figure_lines, '\\includegraphics[width=' .. width .. ']{' .. pdf_path .. '}')
+    table.insert(
+      figure_lines,
+      '\\includegraphics[width=' .. width .. ',height=' .. max_height .. ',keepaspectratio]{' .. pdf_path .. '}'
+    )
   else
     return nil
   end
@@ -150,7 +194,7 @@ local function create_figure_from_pdf(pdf_path, config)
     table.insert(figure_lines, '\\label{' .. label .. '}')
   end
 
-  table.insert(figure_lines, '\\end{figure}')
+  table.insert(figure_lines, '\\end{' .. figure_env .. '}')
 
   return table.concat(figure_lines, '\n')
 end
@@ -182,13 +226,34 @@ function CodeBlock(el)
   end
 
   -- Prepare configuration
+  local is_fullwidth = has_any_class(el, { 'fullwidth', 'wide', 'widetable', 'starred' })
+  local default_width = MERMAID_DEFAULT_WIDTH
+  local default_max_height = MERMAID_DEFAULT_MAX_HEIGHT
+  local default_placement = MERMAID_DEFAULT_FLOAT_PLACEMENT
+  local figure_env = 'figure'
+
+  if is_twocolumn then
+    default_width = MERMAID_TWOCOL_WIDTH
+    default_max_height = MERMAID_TWOCOL_MAX_HEIGHT
+  end
+
+  if is_fullwidth then
+    figure_env = 'figure*'
+    default_width = MERMAID_TWOCOL_WIDE_WIDTH
+    default_max_height = MERMAID_TWOCOL_WIDE_MAX_HEIGHT
+    default_placement = MERMAID_TWOCOL_WIDE_PLACEMENT
+  end
+
   local config = {
     width = 1024,
     height = tonumber(get_attr_value(el, 'height') or MERMAID_DEFAULT_HEIGHT),
     bg_color = get_attr_value(el, 'bg-color') or 'transparent',
     caption = get_attr_value(el, 'caption') or '',
     label = get_attr_value(el, 'label') or '',
-    width_latex = get_attr_value(el, 'width') or MERMAID_DEFAULT_WIDTH,
+    width_latex = get_attr_value(el, 'width') or default_width,
+    max_height_latex = get_attr_value(el, 'max-height') or default_max_height,
+    placement = get_attr_value(el, 'placement') or default_placement,
+    figure_env = figure_env,
   }
 
   -- Render Mermaid to SVG
@@ -208,6 +273,9 @@ function CodeBlock(el)
     caption = config.caption,
     label = config.label,
     width = config.width_latex,
+    max_height = config.max_height_latex,
+    placement = config.placement,
+    figure_env = config.figure_env,
   })
 
   if figure_latex then
@@ -215,6 +283,11 @@ function CodeBlock(el)
   else
     return pandoc.RawBlock('latex', create_fallback_code_block(source))
   end
+end
+
+function Meta(m)
+  is_twocolumn = meta_bool(m, 'twocolumn', false)
+  return m
 end
 
 -- Clean up cache on filter exit (optional, can be commented out for debugging)
