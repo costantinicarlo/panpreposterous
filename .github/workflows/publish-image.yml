@@ -72,6 +72,13 @@ jobs:
           chmod +x tests/check-mermaid-phase5.sh
           tests/check-mermaid-phase5.sh
 
+      - name: Run intermediate TeX checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x tests/check-intermediate-tex.sh
+          tests/check-intermediate-tex.sh
+
   verify-build:
     if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
