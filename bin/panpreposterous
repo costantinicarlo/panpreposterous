@@ -10,6 +10,63 @@ BACKMATTER_FILTER_PATH="${PANPREPOSTEROUS_BACKMATTER_FILTER_PATH:-${PANPREPOSTER
 SUPPLEMENTARY_FILTER_PATH="${PANPREPOSTEROUS_SUPPLEMENTARY_FILTER_PATH:-${PANPREPOSTEROUS_FILTERS_DIR}/supplementary.lua}"
 MERMAID_FILTER_PATH="${PANPREPOSTEROUS_MERMAID_FILTER_PATH:-${PANPREPOSTEROUS_FILTERS_DIR}/mermaid.lua}"
 
+read_yaml_bool_key() {
+  local file_path="$1"
+  local key_name="$2"
+
+  awk -v key_name="$key_name" '
+    BEGIN {
+      in_frontmatter = 0
+    }
+    NR == 1 {
+      if ($0 == "---") {
+        in_frontmatter = 1
+        next
+      }
+      exit
+    }
+    in_frontmatter && $0 == "---" {
+      exit
+    }
+    in_frontmatter {
+      line = $0
+      sub(/#.*/, "", line)
+
+      pattern = "^[[:space:]]*" key_name "[[:space:]]*:[[:space:]]*"
+      if (line ~ pattern) {
+        sub(pattern, "", line)
+        gsub(/^[[:space:]\"\047]+|[[:space:]\"\047]+$/, "", line)
+        value = tolower(line)
+
+        if (value == "true" || value == "yes" || value == "on" || value == "1") {
+          print "true"
+          exit
+        }
+
+        if (value == "false" || value == "no" || value == "off" || value == "0" || value == "") {
+          print "false"
+          exit
+        }
+
+        print "invalid"
+        exit
+      }
+    }
+  ' "$file_path"
+}
+
+tex_output_path_for() {
+  local output_path="$1"
+  local lowercase_output
+  lowercase_output="${output_path,,}"
+
+  if [[ "$lowercase_output" == *.pdf ]]; then
+    printf '%s.tex\n' "${output_path:0:${#output_path}-4}"
+  else
+    printf '%s.tex\n' "$output_path"
+  fi
+}
+
 print_help() {
   printf '%s\n' \
     "Panpreposterous — build reproducible PDFs with Pandoc + XeLaTeX" \
@@ -22,6 +79,7 @@ print_help() {
     "  filters : $MERMAID_FILTER_PATH, $BACKMATTER_FILTER_PATH, $SUPPLEMENTARY_FILTER_PATH" \
     "  engine  : xelatex" \
     "  citeproc: on" \
+    "  keep_intermediate_tex: off (enable with YAML key keep_intermediate_tex: true)" \
     "" \
     "Example:" \
     "  panpreposterous manuscript.md --bibliography refs.bib --csl journal.csl -o manuscript.pdf"
@@ -71,6 +129,31 @@ input_file="${args[0]}"
 if [[ "$input_file" != "-" && ! -r "$input_file" ]]; then
   echo "Error: input manuscript file not found or not readable: $input_file" >&2
   exit 1
+fi
+
+keep_intermediate_tex="false"
+if [[ "$input_file" != "-" ]]; then
+  metadata_keep_tex="$(read_yaml_bool_key "$input_file" "keep_intermediate_tex" || true)"
+  if [[ "$metadata_keep_tex" == "invalid" ]]; then
+    echo "Error: invalid boolean value for YAML key keep_intermediate_tex in $input_file" >&2
+    exit 1
+  fi
+
+  if [[ "$metadata_keep_tex" == "true" ]]; then
+    keep_intermediate_tex="true"
+  fi
+fi
+
+if [[ "$keep_intermediate_tex" == "true" ]]; then
+  tex_output_path="$(tex_output_path_for "$out")"
+  pandoc "${args[@]}" \
+    --template="$TEMPLATE_PATH" \
+    --lua-filter="$MERMAID_FILTER_PATH" \
+    --lua-filter="$BACKMATTER_FILTER_PATH" \
+    --lua-filter="$SUPPLEMENTARY_FILTER_PATH" \
+    --citeproc \
+    -t latex \
+    -o "$tex_output_path"
 fi
 
 pandoc "${args[@]}" \

@@ -223,6 +223,7 @@ Common YAML fields include:
 - `twocolumn: true`
 - `running_title: "Short title"`
 - `doc_version: "Preprint"` or `doc_version: "Postprint"`
+- `keep_intermediate_tex: true` to emit a sidecar `.tex` file next to the PDF output
 - `correspondence: ["alice@uni.edu (A. Smith)"]`
 - `csl_entry_spacing_extra: 0.25`
 - `preprint_doi`, `preprint_doi_label`
@@ -232,6 +233,27 @@ Common YAML fields include:
 
 For a complete metadata contract with required versus optional keys, see
 [Manuscript Input Contract](docs/inputs.md).
+
+## Intermediate TeX Output
+
+Set `keep_intermediate_tex: true` in manuscript YAML front matter to keep a
+rendered LaTeX sidecar file for debugging or inspection.
+
+Example:
+
+````markdown
+---
+title: "Example Manuscript"
+keep_intermediate_tex: true
+---
+````
+
+When enabled, Panpreposterous writes:
+
+- The requested PDF output path (for example `manuscript.pdf`)
+- A matching TeX sidecar with the same basename (for example `manuscript.tex`)
+
+Default behavior remains unchanged when the key is omitted or set to `false`.
 
 ## Backmatter
 
