@@ -9,7 +9,7 @@ affiliations:
     name: "Department of Testing, Test University, Test Country"
 running_title: "Mermaid Test"
 doc_version: "Preprint"
-twocolumn: false
+twocolumn: true
 correspondence:
   - test@example.com (T. Author)
 abstract: "This manuscript tests the rendering of Mermaid diagrams in panpreposterous. It includes examples of flowcharts, sequence diagrams, and state diagrams."
