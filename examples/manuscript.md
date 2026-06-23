@@ -50,6 +50,24 @@ Results text.
 Table: **Full-width Markdown table example.** The `.fullwidth` contract renders this table as a two-column `table*` float.
 :::
 
+```{.mermaid caption="Mermaid flowchart example rendered by panpreposterous." label="fig:mermaid-flow"}
+flowchart LR
+  Input[Markdown manuscript] --> Filter[Lua Mermaid filter]
+  Filter --> Render[mmdc and rsvg-convert]
+  Render --> PDF[PDF figure float]
+```
+
+```{.mermaid .fullwidth caption="Full-width Mermaid sequence diagram in two-column mode." label="fig:mermaid-seq"}
+sequenceDiagram
+  participant Author
+  participant Panpreposterous
+  participant XeLaTeX
+  Author->>Panpreposterous: Build manuscript
+  Panpreposterous->>Panpreposterous: Render Mermaid blocks
+  Panpreposterous->>XeLaTeX: Include generated PDF figures
+  XeLaTeX-->>Author: Produce final article PDF
+```
+
 ![Main figure](figs/fig1.svg){#fig:main width=0.9\\columnwidth}
 
 # Discussion
