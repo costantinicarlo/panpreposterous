@@ -18,6 +18,9 @@ ENV PANPREPOSTEROUS_TEMPLATE_PATH=/opt/panpreposterous/template/preprint_templat
 ENV PANPREPOSTEROUS_BACKMATTER_FILTER_PATH=/opt/panpreposterous/filters/backmatter.lua
 ENV PANPREPOSTEROUS_SUPPLEMENTARY_FILTER_PATH=/opt/panpreposterous/filters/supplementary.lua
 ENV PANPREPOSTEROUS_MERMAID_FILTER_PATH=/opt/panpreposterous/filters/mermaid.lua
+ENV PANPREPOSTEROUS_MERMAID_PUPPETEER_CONFIG_PATH=/opt/panpreposterous/template/mermaid-puppeteer-config.json
+ENV PUPPETEER_SKIP_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 ARG TINYTEX_RELEASE=v2026.06
 ARG TARGETARCH
@@ -25,7 +28,7 @@ ARG TARGETARCH
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl xz-utils perl fontconfig libfontconfig1 \
     make git pandoc librsvg2-bin \
-    nodejs npm \
+    nodejs npm chromium \
  && rm -rf /var/lib/apt/lists/*
 
 # Install mermaid-cli globally for Mermaid diagram rendering

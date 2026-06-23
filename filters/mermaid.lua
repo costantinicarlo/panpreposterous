@@ -19,6 +19,18 @@ end
 local MERMAID_CACHE_DIR = '/tmp/panpreposterous_mermaid'
 local MERMAID_DEFAULT_WIDTH = '0.9\\columnwidth'
 local MERMAID_DEFAULT_HEIGHT = '768'
+local MERMAID_PUPPETEER_CONFIG_PATH =
+  os.getenv('PANPREPOSTEROUS_MERMAID_PUPPETEER_CONFIG_PATH')
+  or '/opt/panpreposterous/template/mermaid-puppeteer-config.json'
+
+local function file_exists(path)
+  local f = io.open(path, 'r')
+  if f then
+    f:close()
+    return true
+  end
+  return false
+end
 
 local function ensure_cache_dir()
   os.execute('mkdir -p "' .. MERMAID_CACHE_DIR .. '"')
@@ -37,7 +49,7 @@ local function get_attr_value(el, key)
   return el.attributes[key]
 end
 
-local function render_mermaid_to_svg(source, config)
+local function render_mermaid_to_pdf(source, config)
   ensure_cache_dir()
 
   config = config or {}
@@ -48,39 +60,63 @@ local function render_mermaid_to_svg(source, config)
   -- Create a hash of the source for caching
   local content_hash = sha256(source)
   local svg_filename = 'mermaid_' .. content_hash .. '.svg'
+  local pdf_filename = 'mermaid_' .. content_hash .. '.pdf'
   local svg_path = MERMAID_CACHE_DIR .. '/' .. svg_filename
+  local pdf_path = MERMAID_CACHE_DIR .. '/' .. pdf_filename
   local mmd_path = MERMAID_CACHE_DIR .. '/' .. 'mermaid_' .. content_hash .. '.mmd'
 
-  -- Check if already cached
-  local cached_file = io.open(svg_path, 'r')
-  if cached_file then
-    cached_file:close()
-    return svg_path
+  -- Check if already cached as PDF
+  if file_exists(pdf_path) then
+    return pdf_path
   end
 
-  -- Write Mermaid source to temporary file
-  local mmd_file = io.open(mmd_path, 'w')
-  if not mmd_file then
-    return nil
-  end
-  mmd_file:write(source)
-  mmd_file:close()
+  -- If SVG exists but PDF does not, convert only
+  if not file_exists(svg_path) then
+    -- Write Mermaid source to temporary file
+    local mmd_file = io.open(mmd_path, 'w')
+    if not mmd_file then
+      return nil, 'Failed to create temporary Mermaid source file'
+    end
+    mmd_file:write(source)
+    mmd_file:close()
 
-  -- Call mermaid-cli to render
-  local cmd = string.format(
-    'mmdc -i "%s" -o "%s" -w %d -H %d --backgroundColor %s 2>&1',
-    mmd_path, svg_path, width, height, bg_color
+    -- Call mermaid-cli to render SVG
+    local cmd
+    if file_exists(MERMAID_PUPPETEER_CONFIG_PATH) then
+      cmd = string.format(
+        'mmdc -p "%s" -i "%s" -o "%s" -w %d -H %d --backgroundColor %s 2>&1',
+        MERMAID_PUPPETEER_CONFIG_PATH, mmd_path, svg_path, width, height, bg_color
+      )
+    else
+      cmd = string.format(
+        'mmdc -i "%s" -o "%s" -w %d -H %d --backgroundColor %s 2>&1',
+        mmd_path, svg_path, width, height, bg_color
+      )
+    end
+
+    local handle = io.popen(cmd)
+    local result = handle:read('*a')
+    local success = handle:close()
+
+    if not success or result:match('Error') or not file_exists(svg_path) then
+      return nil, result
+    end
+  end
+
+  -- Convert SVG to PDF for reliable XeLaTeX inclusion
+  local convert_cmd = string.format(
+    'rsvg-convert -f pdf -o "%s" "%s" 2>&1',
+    pdf_path, svg_path
   )
+  local convert_handle = io.popen(convert_cmd)
+  local convert_result = convert_handle:read('*a')
+  local convert_success = convert_handle:close()
 
-  local handle = io.popen(cmd)
-  local result = handle:read('*a')
-  local success = handle:close()
-
-  if not success or result:match('Error') then
-    return nil, result
+  if not convert_success or not file_exists(pdf_path) then
+    return nil, convert_result
   end
 
-  return svg_path
+  return pdf_path
 end
 
 local function get_caption_text(caption)
@@ -89,7 +125,7 @@ local function get_caption_text(caption)
   return stringify(caption)
 end
 
-local function create_figure_from_svg(svg_path, config)
+local function create_figure_from_pdf(pdf_path, config)
   config = config or {}
   local caption = config.caption or ''
   local label = config.label or ''
@@ -100,18 +136,8 @@ local function create_figure_from_svg(svg_path, config)
     '\\centering',
   }
 
-  -- Read SVG and embed it
-  local svg_file = io.open(svg_path, 'r')
-  if svg_file then
-    local svg_content = svg_file:read('*a')
-    svg_file:close()
-
-    -- Sanitize SVG for LaTeX (escape special characters)
-    svg_content = svg_content:gsub('%%', '\\%%')
-    svg_content = svg_content:gsub('\\', '\\textbackslash{}')
-
-    -- Use \includegraphics if we can, otherwise embed raw SVG
-    table.insert(figure_lines, '\\includegraphics[width=' .. width .. ']{' .. svg_path .. '}')
+  if file_exists(pdf_path) then
+    table.insert(figure_lines, '\\includegraphics[width=' .. width .. ']{' .. pdf_path .. '}')
   else
     return nil
   end
@@ -166,9 +192,9 @@ function CodeBlock(el)
   }
 
   -- Render Mermaid to SVG
-  local svg_path, error_msg = render_mermaid_to_svg(source, config)
+  local pdf_path, error_msg = render_mermaid_to_pdf(source, config)
 
-  if not svg_path then
+  if not pdf_path then
     -- Fallback: render as code block with error message
     local error_text = (error_msg or 'Unknown error'):gsub('\n', ' ')
     return pandoc.RawBlock(
@@ -178,7 +204,7 @@ function CodeBlock(el)
   end
 
   -- Create LaTeX figure with SVG
-  local figure_latex = create_figure_from_svg(svg_path, {
+  local figure_latex = create_figure_from_pdf(pdf_path, {
     caption = config.caption,
     label = config.label,
     width = config.width_latex,
