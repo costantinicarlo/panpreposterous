@@ -60,6 +60,9 @@ RUN /bin/bash -lc 'set -euo pipefail; \
     test -n "$tinytex_bin"; \
     ln -sf "$tinytex_bin"/* /usr/local/bin/'
 
+# Update tlmgr itself before installing packages (required for TinyTeX compatibility)
+RUN tlmgr update --self
+
 # Install collections that cover all needed packages
 RUN tlmgr install \
     collection-latex \
