@@ -12,22 +12,45 @@ earlier published image tags predate it and are covered by the lineage record.
 
 ## [Unreleased]
 
+No entries yet.
+
+## [1.4.0] - 2026-06-23
+
+Release focused on Mermaid diagram rendering, optional intermediate TeX sidecar
+generation, and strengthened CI release gates.
+
 ### Added
 
-- Full-width floating Markdown tables: a table marked `.fullwidth` is emitted as a `table*` float spanning both columns, preserving caption and label, instead of being forced onto its own page as a one-column island.
+- Mermaid diagram rendering support through the default Lua filter chain.
+- Container runtime dependencies for Mermaid rendering (`mermaid-cli`, Chromium,
+  Puppeteer config).
+- Optional manuscript metadata key `keep_intermediate_tex: true` to emit a
+  sidecar `.tex` file alongside the requested PDF output.
+- Regression suite for Mermaid Phase 5 behaviour
+  (`tests/check-mermaid-phase5.sh`) and related fixtures.
+- Regression suite for intermediate TeX sidecar behaviour
+  (`tests/check-intermediate-tex.sh`) and related fixtures.
+- Diagram authoring guide in [docs/diagrams.md](docs/diagrams.md).
+- Full-width floating Markdown tables: a table marked `.fullwidth` is emitted
+  as a `table*` float spanning both columns, preserving caption and label,
+  instead of being forced onto its own page as a one-column island.
 - Regression test covering the full-width Markdown table contract.
-- Naming and typography policy document.
-- Bundled-example documentation for the full-width Markdown table contract.
 
 ### Changed
 
-- Documentation updated to describe the full-width table behaviour in
-  [docs/filters.md](docs/filters.md), the README, and the examples.
+- CI workflow now includes a dedicated `verify-mermaid-phase5` job and gates
+  publish on both `verify-mermaid-phase5` and `verify-build`.
+- Runtime asset verification now explicitly checks Mermaid filter path
+  availability.
+- Documentation updated to describe Mermaid usage and intermediate TeX behaviour
+  in [README.md](README.md), [docs/inputs.md](docs/inputs.md),
+  [docs/filters.md](docs/filters.md), and examples.
 
 ### Planned
 
 - Refactor the baseline image to build on official Pandoc container images.
-- Add a Typst rendering backend alongside the existing XeLaTeX backend, with a backend-neutral metadata schema (targeted for a future major release).
+- Add a Typst rendering backend alongside the existing XeLaTeX backend, with a
+  backend-neutral metadata schema (targeted for a future major release).
 
 ## [1.3.0]
 
