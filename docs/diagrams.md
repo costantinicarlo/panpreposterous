@@ -34,6 +34,18 @@ Set attributes on Mermaid code blocks to control figure rendering.
 | `placement` | LaTeX float placement | `placement="!htbp"` |
 | `height` | Mermaid render pixel height | `height="900"` |
 | `bg-color` | Mermaid background color | `bg-color="white"` |
+| `theme` | Mermaid theme, default `base` | `theme="neutral"` |
+| `primary-color` | Node fill color, default white | `primary-color="#f8fafc"` |
+| `primary-text-color` | Node text color, default dark gray | `primary-text-color="#111827"` |
+| `primary-border-color` | Node border color, default gray | `primary-border-color="#4b5563"` |
+| `line-color` | Edge and arrow color, default gray | `line-color="#4b5563"` |
+
+By default, Mermaid diagrams use a manuscript-safe `base` theme with white
+flowchart nodes, dark node text, and neutral gray borders and arrows. This keeps
+diagram labels readable in PDF output without requiring per-diagram styling.
+Flowcharts also use SVG text labels rather than HTML labels because the
+SVG-to-PDF conversion step does not reliably preserve Mermaid `foreignObject`
+HTML labels.
 
 Example with attributes:
 

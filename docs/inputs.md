@@ -148,6 +148,17 @@ LaTeX float behavior:
 - `placement`: float placement hint, for example `!htbp`.
 - `height`: pixel height passed to Mermaid CLI renderer.
 - `bg-color`: Mermaid render background, default `transparent`.
+- `theme`: Mermaid theme, default `base`.
+- `primary-color`: node fill color, default white.
+- `primary-text-color`: node text color, default dark gray.
+- `primary-border-color`: node border color, default gray.
+- `line-color`: edge and arrow color, default gray.
+
+The default Mermaid theme is tuned for manuscript PDFs: flowchart nodes are
+white, text is dark, and borders/arrows are neutral gray so labels remain
+visible after SVG-to-PDF conversion. Flowchart labels are emitted as SVG text
+rather than Mermaid HTML labels, because the SVG-to-PDF conversion step does not
+reliably preserve `foreignObject` HTML labels.
 
 In two-column mode (`twocolumn: true`), Mermaid blocks with classes
 `.fullwidth`, `.wide`, `.widetable`, or `.starred` are emitted as `figure*`

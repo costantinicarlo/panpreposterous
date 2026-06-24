@@ -26,6 +26,11 @@ local MERMAID_TWOCOL_MAX_HEIGHT = '0.30\\textheight'
 local MERMAID_TWOCOL_WIDE_WIDTH = '0.95\\textwidth'
 local MERMAID_TWOCOL_WIDE_MAX_HEIGHT = '0.42\\textheight'
 local MERMAID_TWOCOL_WIDE_PLACEMENT = '!t'
+local MERMAID_DEFAULT_THEME = 'base'
+local MERMAID_DEFAULT_PRIMARY_COLOR = '#ffffff'
+local MERMAID_DEFAULT_PRIMARY_TEXT_COLOR = '#111827'
+local MERMAID_DEFAULT_PRIMARY_BORDER_COLOR = '#4b5563'
+local MERMAID_DEFAULT_LINE_COLOR = '#4b5563'
 local MERMAID_PUPPETEER_CONFIG_PATH =
   os.getenv('PANPREPOSTEROUS_MERMAID_PUPPETEER_CONFIG_PATH')
   or '/opt/panpreposterous/template/mermaid-puppeteer-config.json'
@@ -64,6 +69,33 @@ local function get_attr_value(el, key)
   return el.attributes[key]
 end
 
+local function json_escape(s)
+  s = tostring(s or '')
+  s = s:gsub('\\', '\\\\')
+  s = s:gsub('"', '\\"')
+  s = s:gsub('\n', '\\n')
+  s = s:gsub('\r', '\\r')
+  s = s:gsub('\t', '\\t')
+  return s
+end
+
+local function mermaid_config_json(config)
+  local theme = config.theme or MERMAID_DEFAULT_THEME
+  local primary_color = config.primary_color or MERMAID_DEFAULT_PRIMARY_COLOR
+  local primary_text_color = config.primary_text_color or MERMAID_DEFAULT_PRIMARY_TEXT_COLOR
+  local primary_border_color = config.primary_border_color or MERMAID_DEFAULT_PRIMARY_BORDER_COLOR
+  local line_color = config.line_color or MERMAID_DEFAULT_LINE_COLOR
+
+  return string.format(
+    '{"theme":"%s","flowchart":{"htmlLabels":false},"themeVariables":{"primaryColor":"%s","primaryTextColor":"%s","primaryBorderColor":"%s","lineColor":"%s","fontFamily":"TeX Gyre Termes, Times, serif"}}',
+    json_escape(theme),
+    json_escape(primary_color),
+    json_escape(primary_text_color),
+    json_escape(primary_border_color),
+    json_escape(line_color)
+  )
+end
+
 local function meta_bool(m, key, default)
   local v = m[key]
   if v == nil then return default end
@@ -94,14 +126,16 @@ local function render_mermaid_to_pdf(source, config)
   local width = config.width or 1024
   local height = config.height or 768
   local bg_color = config.bg_color or 'transparent'
+  local mermaid_config = mermaid_config_json(config)
 
   -- Create a hash of the source for caching
-  local content_hash = sha256(source)
+  local content_hash = sha256(source .. '\n' .. mermaid_config .. '\n' .. bg_color .. '\n' .. tostring(width) .. 'x' .. tostring(height))
   local svg_filename = 'mermaid_' .. content_hash .. '.svg'
   local pdf_filename = 'mermaid_' .. content_hash .. '.pdf'
   local svg_path = MERMAID_CACHE_DIR .. '/' .. svg_filename
   local pdf_path = MERMAID_CACHE_DIR .. '/' .. pdf_filename
   local mmd_path = MERMAID_CACHE_DIR .. '/' .. 'mermaid_' .. content_hash .. '.mmd'
+  local config_path = MERMAID_CACHE_DIR .. '/' .. 'mermaid_' .. content_hash .. '.json'
 
   -- Check if already cached as PDF
   if file_exists(pdf_path) then
@@ -118,17 +152,24 @@ local function render_mermaid_to_pdf(source, config)
     mmd_file:write(source)
     mmd_file:close()
 
+    local config_file = io.open(config_path, 'w')
+    if not config_file then
+      return nil, 'Failed to create temporary Mermaid config file'
+    end
+    config_file:write(mermaid_config)
+    config_file:close()
+
     -- Call mermaid-cli to render SVG
     local cmd
     if file_exists(MERMAID_PUPPETEER_CONFIG_PATH) then
       cmd = string.format(
-        'mmdc -p "%s" -i "%s" -o "%s" -w %d -H %d --backgroundColor %s 2>&1',
-        MERMAID_PUPPETEER_CONFIG_PATH, mmd_path, svg_path, width, height, bg_color
+        'mmdc -p "%s" -c "%s" -i "%s" -o "%s" -w %d -H %d --backgroundColor %s 2>&1',
+        MERMAID_PUPPETEER_CONFIG_PATH, config_path, mmd_path, svg_path, width, height, bg_color
       )
     else
       cmd = string.format(
-        'mmdc -i "%s" -o "%s" -w %d -H %d --backgroundColor %s 2>&1',
-        mmd_path, svg_path, width, height, bg_color
+        'mmdc -c "%s" -i "%s" -o "%s" -w %d -H %d --backgroundColor %s 2>&1',
+        config_path, mmd_path, svg_path, width, height, bg_color
       )
     end
 
@@ -248,6 +289,11 @@ function CodeBlock(el)
     width = 1024,
     height = tonumber(get_attr_value(el, 'height') or MERMAID_DEFAULT_HEIGHT),
     bg_color = get_attr_value(el, 'bg-color') or 'transparent',
+    theme = get_attr_value(el, 'theme') or MERMAID_DEFAULT_THEME,
+    primary_color = get_attr_value(el, 'primary-color') or MERMAID_DEFAULT_PRIMARY_COLOR,
+    primary_text_color = get_attr_value(el, 'primary-text-color') or MERMAID_DEFAULT_PRIMARY_TEXT_COLOR,
+    primary_border_color = get_attr_value(el, 'primary-border-color') or MERMAID_DEFAULT_PRIMARY_BORDER_COLOR,
+    line_color = get_attr_value(el, 'line-color') or MERMAID_DEFAULT_LINE_COLOR,
     caption = get_attr_value(el, 'caption') or '',
     label = get_attr_value(el, 'label') or '',
     width_latex = get_attr_value(el, 'width') or default_width,
