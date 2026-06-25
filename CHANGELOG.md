@@ -5,7 +5,10 @@ All notable changes to Panpreposterous are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project aims to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 Container images are published to Docker Hub at
-`docker.io/costantinicarlo/panpreposterous`, tagged `X.Y.Z`, `X.Y`, and `latest` by the release pipeline. Image provenance and the historical baseline are recorded in [docs/release/container-image-lineage.md](docs/release/container-image-lineage.md).
+`docker.io/costantinicarlo/panpreposterous`, tagged with the exact semantic
+version and, for tag-triggered releases, `latest` by the release pipeline.
+Image provenance and the historical baseline are recorded in
+[docs/release/container-image-lineage.md](docs/release/container-image-lineage.md).
 
 This changelog begins tracking changes from the current development cycle;
 earlier published image tags predate it and are covered by the lineage record.
@@ -13,6 +16,36 @@ earlier published image tags predate it and are covered by the lineage record.
 ## [Unreleased]
 
 No entries yet.
+
+## [1.4.1] - 2026-06-25
+
+Patch release for the 1.4 Mermaid rendering line, prepared for Docker Hub as
+`costantinicarlo/panpreposterous:1.4.1`.
+
+### Fixed
+
+- Mermaid flowchart labels now remain readable after SVG-to-PDF conversion by
+  using a manuscript-safe default `base` theme, white node fills, dark node
+  text, and neutral gray borders/arrows.
+- Mermaid flowcharts now render labels as SVG text instead of Mermaid HTML
+  labels, avoiding `foreignObject` output that can be lost during PDF
+  conversion.
+
+### Added
+
+- Mermaid code block attributes for theme and default color overrides:
+  `theme`, `primary-color`, `primary-text-color`, `primary-border-color`, and
+  `line-color`.
+- Regression checks asserting Mermaid default node fill, text color, SVG text
+  labels, and absence of `foreignObject` labels.
+
+### Documentation
+
+- Mermaid authoring docs and the manuscript input contract now document the
+  default diagram theme and color override attributes.
+- Runtime, architecture, filter, and release-lineage documentation now include
+  the Mermaid filter and Puppeteer config as part of the container runtime
+  contract.
 
 ## [1.4.0] - 2026-06-23
 

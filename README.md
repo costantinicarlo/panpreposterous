@@ -77,6 +77,12 @@ To use the published image, pull it once:
 docker pull costantinicarlo/panpreposterous:latest
 ```
 
+For the patched 1.4 release line after publication, pin the exact image tag:
+
+```bash
+docker pull costantinicarlo/panpreposterous:1.4.1
+```
+
 Published image platform support:
 
 - `linux/amd64`
@@ -412,7 +418,7 @@ The public container image is published at:
 Publishing to Docker Hub is automated with GitHub Actions, which keeps the public image aligned with repository releases:
 
 - Workflow: [.github/workflows/publish-image.yml](.github/workflows/publish-image.yml)
-- Push a tag like `v1.1.0` to publish `1.1.0` and `latest`
+- Push a tag like `v1.4.1` to publish `1.4.1` and `latest`
 - Or run workflow dispatch with `image_tag` and optional `push_latest`
 
 Repository secrets required:

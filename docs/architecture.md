@@ -15,10 +15,12 @@ flowchart LR
     A[Author Markdown + YAML + Bib + CSL] --> B[Docker Container Runtime]
     B --> C[bin/panpreposterous]
     C --> D[Pandoc]
-    D --> E[Lua Filter: backmatter.lua]
-    D --> F[Lua Filter: supplementary.lua]
-    D --> G[Template: preprint_template_xe_citeproc.tex]
-    G --> H[Style: panpreprint_1-0.sty]
+    D --> E[Lua Filter: mermaid.lua]
+    D --> F[Lua Filter: backmatter.lua]
+    D --> G[Lua Filter: supplementary.lua]
+    D --> T[Template: preprint_template_xe_citeproc.tex]
+    E --> R[Mermaid CLI, Chromium, rsvg-convert]
+    T --> H[Style: panpreprint_1-0.sty]
     D --> I[XeLaTeX Engine]
     I --> J[PDF Output]
     K[Git tag or workflow dispatch] --> L[verify-build job]
@@ -35,9 +37,10 @@ flowchart LR
   [bin/panpreposterous](../bin/panpreposterous) normalizes output handling,
   validates required inputs/assets, and invokes Pandoc with fixed defaults.
 - Transformation layer:
-  [filters/backmatter.lua](../filters/backmatter.lua) and
+  [filters/mermaid.lua](../filters/mermaid.lua),
+  [filters/backmatter.lua](../filters/backmatter.lua), and
   [filters/supplementary.lua](../filters/supplementary.lua) implement document
-  structure policies.
+  structure and diagram-rendering policies.
 - Presentation layer:
   [template/preprint_template_xe_citeproc.tex](../template/preprint_template_xe_citeproc.tex)
   and [template/panpreprint_1-0.sty](../template/panpreprint_1-0.sty) define PDF
@@ -57,7 +60,7 @@ flowchart LR
 | --- | --- | --- | --- |
 | Runtime image | [Dockerfile](../Dockerfile) | Toolchain install, TinyTeX provenance verification, runtime path layout | Manuscript content semantics |
 | CLI wrapper | [bin/panpreposterous](../bin/panpreposterous) | Fail-fast input/runtime checks, fixed Pandoc defaults, argument pass-through | TeX formatting rules |
-| Filters | [filters/backmatter.lua](../filters/backmatter.lua), [filters/supplementary.lua](../filters/supplementary.lua) | Backmatter handling, supplementary placement, table behavior contracts | Container install or release publishing |
+| Filters | [filters/mermaid.lua](../filters/mermaid.lua), [filters/backmatter.lua](../filters/backmatter.lua), [filters/supplementary.lua](../filters/supplementary.lua) | Mermaid rendering, backmatter handling, supplementary placement, table behavior contracts | Container install or release publishing |
 | Template and style | [template/preprint_template_xe_citeproc.tex](../template/preprint_template_xe_citeproc.tex), [template/panpreprint_1-0.sty](../template/panpreprint_1-0.sty) | Layout, typography, DOI/running-header rendering | Input validation and CI orchestration |
 | Release workflow | [.github/workflows/publish-image.yml](../.github/workflows/publish-image.yml) | verify-build gate, publish orchestration, tag rules | Manuscript authoring guidance |
 
@@ -84,14 +87,17 @@ flowchart LR
 
 ### Contract 1: In-Container Runtime Paths
 
-The wrapper assumes the following files exist and are readable in the container:
+The container runtime expects the following files to exist and remain readable:
 
 - `/opt/panpreposterous/template/preprint_template_xe_citeproc.tex`
+- `/opt/panpreposterous/template/mermaid-puppeteer-config.json`
+- `/opt/panpreposterous/filters/mermaid.lua`
 - `/opt/panpreposterous/filters/backmatter.lua`
 - `/opt/panpreposterous/filters/supplementary.lua`
 
-If any of these are missing or unreadable, wrapper startup fails before Pandoc
-execution.
+If the template or Lua filters are missing or unreadable, wrapper startup fails
+before Pandoc execution. The Mermaid Puppeteer config is consumed by the
+Mermaid filter when present and is provisioned by the image.
 
 ### Contract 2: Input Manuscript Readability
 

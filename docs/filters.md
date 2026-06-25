@@ -12,8 +12,24 @@ policy behavior.
 
 Panpreposterous runs these filters in order:
 
-1. [filters/backmatter.lua](../filters/backmatter.lua)
-2. [filters/supplementary.lua](../filters/supplementary.lua)
+1. [filters/mermaid.lua](../filters/mermaid.lua)
+2. [filters/backmatter.lua](../filters/backmatter.lua)
+3. [filters/supplementary.lua](../filters/supplementary.lua)
+
+## Mermaid Filter Contracts
+
+The Mermaid filter converts fenced Mermaid code blocks to vector diagram assets
+before LaTeX rendering. It calls Mermaid CLI to produce SVG, converts SVG to
+PDF with `rsvg-convert`, and emits LaTeX figure floats.
+
+Supported author controls include captions, labels, LaTeX width/max-height,
+float placement, render height, background color, theme, node fill/text/border
+colors, and line color. The default `base` theme is tuned for manuscript PDFs:
+flowchart nodes are white, labels are dark SVG text, and borders/arrows use a
+neutral gray so SVG-to-PDF conversion preserves readability.
+
+In two-column manuscripts, `.fullwidth`, `.wide`, `.widetable`, and `.starred`
+Mermaid blocks render as `figure*` floats.
 
 ## Backmatter Filter Contracts
 

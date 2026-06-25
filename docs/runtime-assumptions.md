@@ -26,8 +26,10 @@ Direct host execution outside the container is not the primary support model.
 - the output path passed with `-o` is writable within the mounted workspace
 - referenced manuscript assets (figures, tables, TeX include files) resolve from
   the mounted directory tree
-- wrapper-required files must remain readable in image layout:
+- runtime files must remain readable in image layout:
   - `/opt/panpreposterous/template/preprint_template_xe_citeproc.tex`
+  - `/opt/panpreposterous/template/mermaid-puppeteer-config.json`
+  - `/opt/panpreposterous/filters/mermaid.lua`
   - `/opt/panpreposterous/filters/backmatter.lua`
   - `/opt/panpreposterous/filters/supplementary.lua`
 
@@ -38,10 +40,14 @@ Path contract ownership:
   - `PANPREPOSTEROUS_TEMPLATE_DIR`
   - `PANPREPOSTEROUS_FILTERS_DIR`
   - `PANPREPOSTEROUS_TEMPLATE_PATH`
+  - `PANPREPOSTEROUS_MERMAID_FILTER_PATH`
+  - `PANPREPOSTEROUS_MERMAID_PUPPETEER_CONFIG_PATH`
   - `PANPREPOSTEROUS_BACKMATTER_FILTER_PATH`
   - `PANPREPOSTEROUS_SUPPLEMENTARY_FILTER_PATH`
-- `bin/panpreposterous` consumes these variables and falls back to stable
-  defaults when unset.
+- `bin/panpreposterous` consumes the template and filter variables and falls
+  back to stable defaults when unset.
+- `filters/mermaid.lua` consumes the Mermaid Puppeteer config variable and
+  falls back to the stable template path when unset.
 - CI validates readability of all required runtime assets inside the built
   image before publish.
 

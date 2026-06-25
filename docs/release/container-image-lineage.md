@@ -36,7 +36,9 @@ The current workspace uses:
 - [Dockerfile](../../Dockerfile)
 - [bin/panpreposterous](../../bin/panpreposterous)
 - [template/preprint_template_xe_citeproc.tex](../../template/preprint_template_xe_citeproc.tex)
+- [template/mermaid-puppeteer-config.json](../../template/mermaid-puppeteer-config.json)
 - [template/panpreprint_1-0.sty](../../template/panpreprint_1-0.sty)
+- [filters/mermaid.lua](../../filters/mermaid.lua)
 - [filters/backmatter.lua](../../filters/backmatter.lua)
 - [filters/supplementary.lua](../../filters/supplementary.lua)
 
