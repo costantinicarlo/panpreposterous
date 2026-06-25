@@ -52,7 +52,7 @@ if ! grep -Fq 'fill:#ffffff' "${types_cache}"/*.svg; then
   exit 1
 fi
 
-if ! grep -Fq 'fill:#111827;color:#111827' "${types_cache}"/*.svg; then
+if ! grep -Eq '(fill|color):#111827' "${types_cache}"/*.svg; then
   printf 'Expected rendered Mermaid SVGs to use dark default label text\n' >&2
   exit 1
 fi

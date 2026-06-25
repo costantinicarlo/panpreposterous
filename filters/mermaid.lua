@@ -87,9 +87,11 @@ local function mermaid_config_json(config)
   local line_color = config.line_color or MERMAID_DEFAULT_LINE_COLOR
 
   return string.format(
-    '{"theme":"%s","flowchart":{"htmlLabels":false},"themeVariables":{"primaryColor":"%s","primaryTextColor":"%s","primaryBorderColor":"%s","lineColor":"%s","fontFamily":"TeX Gyre Termes, Times, serif"}}',
+    '{"theme":"%s","flowchart":{"htmlLabels":false},"themeVariables":{"primaryColor":"%s","primaryTextColor":"%s","textColor":"%s","nodeTextColor":"%s","primaryBorderColor":"%s","lineColor":"%s","fontFamily":"TeX Gyre Termes, Times, serif"}}',
     json_escape(theme),
     json_escape(primary_color),
+    json_escape(primary_text_color),
+    json_escape(primary_text_color),
     json_escape(primary_text_color),
     json_escape(primary_border_color),
     json_escape(line_color)
