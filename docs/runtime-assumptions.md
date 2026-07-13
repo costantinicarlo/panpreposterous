@@ -82,6 +82,34 @@ Failure signals for shell/help regressions:
 If custom metadata selects non-default fonts, those fonts must be available in
 container runtime.
 
+### Runtime font contract
+
+The official container image currently provides these font families through
+fontconfig:
+
+- `DejaVu Serif`
+- `DejaVu Sans`
+- `DejaVu Sans Mono`
+
+Template defaults and fallback policy:
+
+- main text font defaults to `TeX Gyre Termes`
+- sans font defaults to `DejaVu Sans`
+- mono font defaults to `DejaVu Sans Mono`
+
+When metadata selects a missing `mainfont`, `sansfont`, or `monofont`, the
+template emits a LaTeX warning and falls back to the corresponding default
+instead of terminating the build immediately.
+
+Unicode punctuation and symbol compatibility is hardened through explicit
+template mappings for common characters used in manuscripts.
+
+Current regression coverage is limited to Western European Latin text
+(including accented letters used in French, Spanish, Portuguese, and similar
+languages) plus the common punctuation and symbol set listed in the fixture.
+Other writing systems, including Chinese, Japanese, Russian, and Arabic, are
+not covered by the present font contract.
+
 ## Cross-Platform Variability
 
 The following outputs may vary across host environments or build moments even

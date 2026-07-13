@@ -151,6 +151,8 @@ if [[ "$keep_intermediate_tex" == "true" ]]; then
     --lua-filter="$MERMAID_FILTER_PATH" \
     --lua-filter="$BACKMATTER_FILTER_PATH" \
     --lua-filter="$SUPPLEMENTARY_FILTER_PATH" \
+    --pdf-engine=xelatex \
+    -V xetex=true \
     --citeproc \
     -t latex \
     -o "$tex_output_path"

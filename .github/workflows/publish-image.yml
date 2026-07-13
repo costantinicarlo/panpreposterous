@@ -79,6 +79,13 @@ jobs:
           chmod +x tests/check-intermediate-tex.sh
           tests/check-intermediate-tex.sh
 
+      - name: Run font compatibility checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x tests/check-font-compatibility.sh
+          tests/check-font-compatibility.sh
+
   verify-build:
     if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest

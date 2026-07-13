@@ -6,9 +6,32 @@
 $if(xetex)$
   \usepackage{fontspec}
   \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
-  $if(mainfont)$\setmainfont{$mainfont$}$else$\setmainfont{TeX Gyre Termes}$endif$
-  $if(sansfont)$\setsansfont{$sansfont$}$endif$
-  $if(monofont)$\setmonofont{$monofont$}$endif$
+  \newcommand{\PanMainFontName}{$if(mainfont)$$mainfont$$else$TeX Gyre Termes$endif$}
+  \newcommand{\PanMainFontFallback}{TeX Gyre Termes}
+  \IfFontExistsTF{\PanMainFontName}{%
+    \setmainfont{\PanMainFontName}%
+  }{%
+    \PackageWarningNoLine{panpreposterous}{Requested main font '\PanMainFontName' not found; using '\PanMainFontFallback'}%
+    \setmainfont{\PanMainFontFallback}%
+  }
+
+  \newcommand{\PanSansFontName}{$if(sansfont)$$sansfont$$else$DejaVu Sans$endif$}
+  \newcommand{\PanSansFontFallback}{DejaVu Sans}
+  \IfFontExistsTF{\PanSansFontName}{%
+    \setsansfont{\PanSansFontName}%
+  }{%
+    \PackageWarningNoLine{panpreposterous}{Requested sans font '\PanSansFontName' not found; using '\PanSansFontFallback'}%
+    \setsansfont{\PanSansFontFallback}%
+  }
+
+  \newcommand{\PanMonoFontName}{$if(monofont)$$monofont$$else$DejaVu Sans Mono$endif$}
+  \newcommand{\PanMonoFontFallback}{DejaVu Sans Mono}
+  \IfFontExistsTF{\PanMonoFontName}{%
+    \setmonofont{\PanMonoFontName}%
+  }{%
+    \PackageWarningNoLine{panpreposterous}{Requested mono font '\PanMonoFontName' not found; using '\PanMonoFontFallback'}%
+    \setmonofont{\PanMonoFontFallback}%
+  }
 $else$
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
@@ -17,6 +40,7 @@ $endif$
 \usepackage{microtype}
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{textcomp}
 \usepackage[dvipsnames]{xcolor} % dvipsnames for Sepia etc.
 \usepackage{amsmath, amsfonts, amssymb, amsthm}
 \usepackage[unicode]{hyperref}
@@ -36,6 +60,23 @@ $endif$
 \usepackage{newunicodechar}
 \newunicodechar{–}{\textendash}
 \newunicodechar{—}{\textemdash}
+\newunicodechar{…}{\ldots{}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{±}{\ensuremath{\pm}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{÷}{\ensuremath{\div}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{←}{\ensuremath{\leftarrow}}
+\newunicodechar{↔}{\ensuremath{\leftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⇐}{\ensuremath{\Leftarrow}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{µ}{\textmu{}}
+\newunicodechar{°}{\textdegree{}}
 \newunicodechar{’}{'}
 \newunicodechar{“}{``}
 \newunicodechar{”}{''}

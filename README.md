@@ -165,6 +165,29 @@ You can pass extra Pandoc arguments after the manuscript file. The wrapper keeps
 For Mermaid authoring and layout controls, see
 [docs/diagrams.md](docs/diagrams.md).
 
+## Font and Unicode Notes
+
+The XeLaTeX template includes Unicode fallback mappings for common manuscript
+symbols and punctuation, including dashes, ellipsis, comparison operators,
+arrows, and micro/degree symbols.
+
+Font customisation is supported through manuscript metadata (`mainfont`,
+`sansfont`, `monofont`). In the official container runtime, tested families
+include:
+
+- `DejaVu Serif`
+- `DejaVu Sans`
+- `DejaVu Sans Mono`
+
+If a requested font is not available at runtime, the template emits a warning
+and falls back to a safe default so builds remain predictable.
+
+Current Unicode regression coverage is limited to Western European Latin text,
+including accented letters used in French, Spanish, Portuguese, and similar
+languages, together with the common punctuation and symbol cases in the font
+fixture. Other scripts such as Chinese, Japanese, Russian, and Arabic are not
+yet covered by the documented font contract.
+
 ## Recommended Article Folder Layout
 
 Keep all manuscript inputs in one folder tree:

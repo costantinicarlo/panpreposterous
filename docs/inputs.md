@@ -64,6 +64,29 @@ correspondence:
 Use these when you need to override defaults for fonts, publication label text,
 or displayed date.
 
+Current font regression coverage is intentionally limited to Western European
+Latin text, including accented letters used in French, Spanish, Portuguese,
+and related languages, together with the common punctuation and symbol cases
+documented in the font fixture. Other scripts and writing systems are not yet
+part of the supported coverage set.
+
+Runtime-tested font families in the official container image:
+
+- `DejaVu Serif`
+- `DejaVu Sans`
+- `DejaVu Sans Mono`
+
+Font fallback contract:
+
+- If a requested `mainfont`, `sansfont`, or `monofont` is unavailable at
+  runtime, the template emits a warning and applies a safe fallback.
+- Fallback defaults are:
+  - main font: `TeX Gyre Termes`
+  - sans font: `DejaVu Sans`
+  - mono font: `DejaVu Sans Mono`
+- For reproducible typography across collaborators, prefer font names known to
+  exist in the container runtime.
+
 ### DOI Side-Margin Rendering
 
 - `preprint_doi`, `preprint_doi_label`
