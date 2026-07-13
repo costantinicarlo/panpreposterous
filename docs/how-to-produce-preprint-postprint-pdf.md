@@ -74,6 +74,14 @@ docker run --rm -v "$PWD":/work panpreposterous \
   panpreposterous manuscript.md --bibliography references.bib --csl journal.csl -o output/manuscript.pdf
 ```
 
+If your manuscript YAML already sets `bibliography` and `csl`, the equivalent
+short form is:
+
+```bash
+docker run --rm -v "$PWD":/work panpreposterous \
+  panpreposterous manuscript.md -o output/manuscript.pdf
+```
+
 What this does:
 
 - Uses your current folder as the working data source.
@@ -172,18 +180,26 @@ Problem: Permission denied when writing output.
 
 Problem: Citations appear as raw keys (for example `[@Smith2023]`).
 
-- Confirm `--bibliography` points to the correct `.bib` file.
+- Confirm `--bibliography` points to the correct `.bib` file, or confirm YAML
+  key `bibliography` points to it.
 - Confirm citation keys in text match keys in the `.bib` file.
 
 Problem: Wrong citation style in output.
 
-- Confirm `--csl` points to the intended style file.
+- Confirm `--csl` points to the intended style file, or confirm YAML key `csl`
+  points to it.
 - Rebuild after changing style.
 
 Problem: Reference list is missing.
 
-- Ensure a references section placeholder exists if your manuscript pattern uses one.
+- Ensure `::: {#refs} :::` exists so citeproc has an insertion anchor.
 - Confirm bibliography file is non-empty and valid.
+
+Problem: Bibliography appears without the heading you expect.
+
+- In this workflow, bibliography heading text comes from your Markdown heading
+  before `#refs`, for example `## References {-}`.
+- Metadata keys like `reference-section-title` do not auto-insert a heading.
 
 #### Figure and image issues
 

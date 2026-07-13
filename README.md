@@ -120,6 +120,14 @@ docker run --rm -v "$PWD":/work costantinicarlo/panpreposterous:latest \
   panpreposterous manuscript.md --bibliography references.bib --csl journal.csl -o manuscript-preprint.pdf
 ```
 
+If your manuscript YAML already defines `bibliography` and `csl`, you can use a
+shorter equivalent command:
+
+```bash
+docker run --rm -v "$PWD":/work costantinicarlo/panpreposterous:latest \
+  panpreposterous manuscript.md -o manuscript-preprint.pdf
+```
+
 The output should appear as:
 
 ```text
@@ -143,6 +151,14 @@ docker run --rm -v "$PWD":/work costantinicarlo/panpreposterous:latest \
   panpreposterous manuscript.md --bibliography references.bib --csl journal.csl -o manuscript.pdf
 ```
 
+Equivalent metadata-first command (when `manuscript.md` sets `bibliography` and
+`csl` in YAML):
+
+```bash
+docker run --rm -v "$PWD":/work costantinicarlo/panpreposterous:latest \
+  panpreposterous manuscript.md -o manuscript.pdf
+```
+
 What this command does:
 
 - Mounts your current folder into the container as `/work`.
@@ -164,6 +180,17 @@ You can pass extra Pandoc arguments after the manuscript file. The wrapper keeps
 
 For Mermaid authoring and layout controls, see
 [docs/diagrams.md](docs/diagrams.md).
+
+Float placement quick reference:
+
+- Mermaid blocks accept `placement="..."`; default is `!htbp`.
+- Full-width Mermaid blocks (`.fullwidth`, `.wide`, `.widetable`, `.starred`)
+  render as `figure*` and default to `!t` in two-column mode.
+- Full-width Markdown tables (`.fullwidth`, `.widetable`, `.starred`) render as
+  `table*` and default to `t`; set `placement="tb"` or `placement="!tbp"`
+  when needed.
+- Standard Markdown image figures use Pandoc/LaTeX defaults unless you author
+  an explicit raw LaTeX float.
 
 ## Font and Unicode Notes
 
@@ -232,6 +259,8 @@ affiliations:
 running_title: "Example"
 doc_version: "Preprint"
 twocolumn: true
+bibliography: references.bib
+csl: journal.csl
 correspondence:
   - first.author@institute.edu (F. Author)
 ---
@@ -242,14 +271,26 @@ This is a citation [@Smith2024].
 
 ![Main figure](figs/fig1.svg){#fig:main width=0.9\\columnwidth}
 
-# References {-}
+## References {-}
 ::: {#refs}
 :::
 ````
 
+References heading contract:
+
+- bibliography entries are inserted at `::: {#refs} :::`
+- the heading text is the Markdown heading you place immediately before that
+  anchor
+- if you omit the heading and keep only `#refs`, the bibliography is still
+  inserted, but no heading is auto-generated
+- `reference-section-title` and `references` metadata are not used by this
+  wrapper to auto-insert a bibliography heading
+
 Common YAML fields include:
 
 - `twocolumn: true`
+- `bibliography: references.bib`
+- `csl: journal.csl`
 - `running_title: "Short title"`
 - `doc_version: "Preprint"` or `doc_version: "Postprint"`
 - `keep_intermediate_tex: true` to emit a sidecar `.tex` file next to the PDF output

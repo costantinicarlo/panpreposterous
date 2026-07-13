@@ -94,6 +94,8 @@ affiliations:
 running_title: "Tutorial"
 doc_version: "Preprint"
 twocolumn: true
+bibliography: references.bib
+csl: journal.csl
 correspondence:
   - first.author@institute.edu (F. Author)
 ---
@@ -119,7 +121,7 @@ Results text.
 
 Discussion text.
 
-# References
+## References {-}
 ::: {#refs}
 :::
 
@@ -152,6 +154,13 @@ docker run --rm -v "$PWD":/work panpreposterous \
   panpreposterous manuscript.md --bibliography references.bib --csl journal.csl -o output/manuscript-preprint.pdf
 ```
 
+Equivalent metadata-first command:
+
+```bash
+docker run --rm -v "$PWD":/work panpreposterous \
+  panpreposterous manuscript.md -o output/manuscript-preprint.pdf
+```
+
 Checkpoint:
 
 - The file `output/manuscript-preprint.pdf` exists.
@@ -169,6 +178,13 @@ Run:
 ```bash
 docker run --rm -v "$PWD":/work panpreposterous \
   panpreposterous manuscript.md --bibliography references.bib --csl journal.csl -o output/manuscript-postprint.pdf
+```
+
+Equivalent metadata-first command:
+
+```bash
+docker run --rm -v "$PWD":/work panpreposterous \
+  panpreposterous manuscript.md -o output/manuscript-postprint.pdf
 ```
 
 Checkpoint:

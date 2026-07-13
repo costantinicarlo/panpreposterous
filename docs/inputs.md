@@ -13,8 +13,10 @@ container command.
 Panpreposterous expects these input files in your manuscript workspace:
 
 - `manuscript.md`
-- bibliography file passed via `--bibliography` (for example `references.bib`)
-- citation style file passed via `--csl` (for example `journal.csl`)
+- bibliography file (for example `references.bib`), provided either by
+  `--bibliography` or by YAML key `bibliography`
+- citation style file (for example `journal.csl`), provided either by `--csl`
+  or by YAML key `csl`
 
 If figures, tables, or included TeX blocks are referenced by the manuscript,
 those files must also exist at the paths used in Markdown.
@@ -48,10 +50,17 @@ affiliations:
 running_title: "Example"
 doc_version: "Preprint"
 twocolumn: true
+bibliography: references.bib
+csl: journal.csl
 correspondence:
   - first.author@institute.edu (F. Author)
 ---
 ````
+
+Both input styles are supported:
+
+- flag-based: `panpreposterous manuscript.md --bibliography references.bib --csl journal.csl -o manuscript.pdf`
+- metadata-first: `panpreposterous manuscript.md -o manuscript.pdf`
 
 ## Optional Metadata by Behavior Domain
 
@@ -144,13 +153,29 @@ directory. When omitted or set to `false`, no TeX sidecar is produced.
 
 These are structural manuscript requirements outside YAML metadata:
 
-- Include a references placeholder block so bibliography output has a target:
+- Include a references placeholder anchor so bibliography output has a target:
 
   ````markdown
-  # References {-}
   ::: {#refs}
   :::
   ````
+
+- Add a heading before `#refs` when you want a visible bibliography title:
+
+  ````markdown
+  ## References {-}
+  ::: {#refs}
+  :::
+  ````
+
+References heading contract:
+
+- `#refs` defines where bibliography entries are inserted.
+- Heading text is taken from your manuscript heading, not auto-generated from
+  metadata.
+- If you keep only `#refs`, bibliography entries render without a heading.
+- Metadata keys such as `reference-section-title` or `references` do not
+  auto-insert the heading in this wrapper workflow.
 
 - Use `::: backmatter` for acknowledgements, contributions, and related end
   sections.
@@ -198,6 +223,23 @@ In two-column mode (`twocolumn: true`), Mermaid blocks with classes
 `.fullwidth`, `.wide`, `.widetable`, or `.starred` are emitted as `figure*`
 floats.
 
+## Float Placement Controls
+
+Use `placement="..."` where supported to tune float placement in LaTeX output.
+
+| Block type | Attribute support | Default placement | Output float |
+| --- | --- | --- | --- |
+| Mermaid code block | `placement` | `!htbp` | `figure` |
+| Mermaid full-width (`.fullwidth`, `.wide`, `.widetable`, `.starred`) | `placement` | `!t` | `figure*` |
+| Markdown table wrapper (`.fullwidth`, `.widetable`, `.starred`) | `placement` | `t` | `table*` |
+| Markdown image figure | no wrapper-level `placement` contract | Pandoc/LaTeX default | `figure` |
+
+Common recipes:
+
+- keep near first mention in one-column manuscripts: `placement="!htbp"`
+- bias to top-of-page in two-column manuscripts: `placement="t"` or `"!t"`
+- allow top or bottom for wide tables: `placement="tb"` or `"!tbp"`
+
 ## Validation Checklist
 
 Before rendering:
@@ -205,7 +247,7 @@ Before rendering:
 - YAML block is valid and starts at the top of `manuscript.md`
 - `title`, `author`, `affiliations`, `running_title`, `doc_version`,
   `twocolumn`, and `correspondence` are present
-- bibliography and CSL files passed in CLI arguments exist
+- bibliography and CSL inputs exist, whether provided by CLI flags or YAML keys
 - figure/table/include paths in markdown resolve from the mounted workspace
 - if `keep_intermediate_tex: true` is set, confirm the `.tex` sidecar is
   generated next to the target PDF

@@ -100,6 +100,20 @@ jobs:
           chmod +x tests/check-verbatim-shaded.sh
           tests/check-verbatim-shaded.sh
 
+      - name: Run citation input mode checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x tests/check-citation-input-modes.sh
+          tests/check-citation-input-modes.sh
+
+      - name: Run references heading contract checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x tests/check-references-heading-contract.sh
+          tests/check-references-heading-contract.sh
+
   verify-build:
     if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
