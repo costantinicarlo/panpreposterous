@@ -17,6 +17,65 @@ earlier published image tags predate it and are covered by the lineage record.
 
 No entries yet.
 
+## [1.4.2] - 2026-07-13
+
+Patch release focused on fixture-driven regression coverage and contract
+hardening after `1.4.1`.
+
+### Added
+
+- Two-column verbatim regression harness and fixtures:
+  `tests/check-verbatim-twocolumn.sh`, `tests/verbatim-onecolumn.md`, and
+  `tests/verbatim-twocolumn.md`.
+- Shaded and fenced-code compatibility regression harness:
+  `tests/check-verbatim-shaded.sh`.
+- Citation input parity regression harness and metadata-first fixture:
+  `tests/check-citation-input-modes.sh` and
+  `tests/metadata-citation-inputs.md`.
+- References heading contract regression harness and fixture matrix:
+  `tests/check-references-heading-contract.sh`,
+  `tests/references-metadata-only.md`, `tests/references-manual-only.md`, and
+  `tests/references-manual-plus-metadata.md`.
+- Supplementary list contract regression harness and fixtures covering
+  markdown, raw LaTeX starred floats, and Mermaid full-width output:
+  `tests/check-supplementary-list-contract.sh`,
+  `tests/supplementary-markdown-lists.md`,
+  `tests/supplementary-raw-starred-floats.md`, and
+  `tests/supplementary-mermaid-starred.md`.
+- Font compatibility fixtures and harness:
+  `tests/check-font-compatibility.sh`, `tests/font-unicode-default.md`,
+  `tests/font-unicode-custom.md`, and `tests/font-unicode-missingfont.md`.
+
+### Fixed
+
+- Fixed a case where supplementary sections rendered but the expected “List of
+  Supplementary Figures/Tables” was missing. Starred LaTeX floats (`figure*`,
+  `table*`) are now detected correctly, so list sections appear as expected.
+- Fixed two-column code-block overflow for long verbatim lines, so long shell
+  commands and similar content are kept within column bounds instead of
+  spilling past the right margin.
+- Fixed LaTeX failures for language-tagged fenced code blocks (for example
+  `bash`-tagged fences), which previously could fail with `Shaded`
+  environment errors.
+- Fixed Unicode/font robustness for manuscripts with special characters and
+  user-selected fonts by improving fallback handling when requested fonts are
+  missing or have partial glyph coverage.
+- Fixed documentation-driven workflow confusion around citations: docs and
+  checks now clearly support both paths (CLI flags or YAML metadata), so users
+  are no longer led to believe `--bibliography` and `--csl` are mandatory.
+- Fixed references-section contract ambiguity by documenting and testing the
+  actual behaviour: `#refs` controls insertion point, and heading text comes
+  from the manuscript heading rather than being auto-inserted from metadata.
+- Mermaid SVG colour assertions in regression checks were refined to reduce
+  false negatives during theme/colour validation.
+
+### Changed
+
+- CI now runs the expanded fixture contract suite, including citation-input,
+  references-heading, and supplementary-list checks.
+- Fixture lineage inventory in `tests/lineage-fixture/README.md` now tracks
+  the complete post-`1.4.1` regression matrix.
+
 ## [1.4.1] - 2026-06-25
 
 Patch release for the 1.4 Mermaid rendering line, prepared for Docker Hub as
