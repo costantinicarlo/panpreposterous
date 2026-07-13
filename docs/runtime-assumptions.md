@@ -110,6 +110,21 @@ languages) plus the common punctuation and symbol set listed in the fixture.
 Other writing systems, including Chinese, Japanese, Russian, and Arabic, are
 not covered by the present font contract.
 
+### Verbatim and syntax-highlighting contract
+
+- fenced code blocks rely on Pandoc syntax-highlighting macros being emitted
+  into the generated TeX preamble
+- the template provides a `Shaded` environment fallback so fenced blocks do not
+  fail with `Environment Shaded undefined`
+- verbatim rendering is configured with line-breaking support (`breaklines`,
+  `breakanywhere`) to keep long code/content lines inside `\columnwidth` in
+  two-column mode
+
+Residual variability:
+
+- extremely long machine-generated literals can still produce visually dense
+  wrapped lines, even when they remain within column bounds
+
 ## Cross-Platform Variability
 
 The following outputs may vary across host environments or build moments even

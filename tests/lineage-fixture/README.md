@@ -11,6 +11,7 @@ scripts/verify-lineage-scaffold.sh.
 - ../check-mermaid-phase5.sh: Mermaid Phase 5 validation harness
 - ../check-intermediate-tex.sh: intermediate TeX sidecar validation harness
 - ../check-font-compatibility.sh: Unicode and font fallback validation harness
+- ../check-verbatim-twocolumn.sh: two-column verbatim wrapping validation harness
 - ../mermaid-types.md: diagram-type and wide-float fixture
 - ../mermaid-supplementary.md: supplementary compatibility fixture
 - ../mermaid-invalid.md: invalid Mermaid fallback fixture
@@ -19,6 +20,7 @@ scripts/verify-lineage-scaffold.sh.
 - ../font-unicode-default.md: default-font Unicode compatibility fixture
 - ../font-unicode-custom.md: explicit runtime-font compatibility fixture
 - ../font-unicode-missingfont.md: missing-font fallback fixture
+- ../verbatim-twocolumn.md: two-column long-line verbatim fixture
 
 Fixture files are intentionally small so they can evolve with the repository
 without introducing heavy snapshot maintenance.

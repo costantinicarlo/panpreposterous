@@ -46,6 +46,34 @@ $endif$
 \usepackage[unicode]{hyperref}
 \usepackage{ragged2e}
 \usepackage{caption}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{fvextra.sty}{%
+  \usepackage{fvextra}
+}{%
+  \usepackage{fancyvrb}
+}
+\IfFileExists{framed.sty}{\usepackage{framed}}{}
+\definecolor{shadecolor}{RGB}{248,248,248}
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+\makeatletter
+\@ifundefined{Shaded}{%
+  \@ifundefined{snugshade}{%
+    \newenvironment{Shaded}{}{}
+  }{%
+    \newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+  }%
+}{}
+\makeatother
+\AtBeginDocument{%
+  \fvset{%
+    breaklines=true,
+    breakanywhere=true,
+    breaksymbolleft={},
+    breaknonspaceingroup=true
+  }%
+}
 
 % ---- Pandoc helper fallback ----
 \providecommand{\pandocbounded}[1]{#1}

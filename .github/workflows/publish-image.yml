@@ -86,6 +86,13 @@ jobs:
           chmod +x tests/check-font-compatibility.sh
           tests/check-font-compatibility.sh
 
+      - name: Run two-column verbatim checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x tests/check-verbatim-twocolumn.sh
+          tests/check-verbatim-twocolumn.sh
+
   verify-build:
     if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest

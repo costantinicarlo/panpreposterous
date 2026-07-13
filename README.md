@@ -356,6 +356,19 @@ prose is not justified. For a Markdown table that should appear as a
 one-column island, add the `.onecol` class. For a Markdown table that should
 render inline despite two-column mode, add `.allowmd`.
 
+## Code Blocks in Two-Column Layout
+
+Fenced code blocks now use Pandoc highlighting macros with a wrapped verbatim
+configuration, including line-breaking support for long tokens in two-column
+mode.
+
+Practical guidance for edge cases:
+
+- Prefer shell examples that use explicit continuation points for readability.
+- Break very long URLs manually when presentation quality is critical.
+- Keep unavoidable machine-generated long literals in supplementary material
+  when they dominate page layout.
+
 For full filter behavior contracts and before/after examples, see
 [Filter Behavior Contract](docs/filters.md).
 

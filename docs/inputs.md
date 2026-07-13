@@ -87,6 +87,13 @@ Font fallback contract:
 - For reproducible typography across collaborators, prefer font names known to
   exist in the container runtime.
 
+Code-block rendering notes:
+
+- fenced code blocks are rendered with wrapped verbatim settings so long lines
+  remain inside column width in `twocolumn: true` mode
+- for readability, prefer author-inserted continuation points in long shell
+  commands and long URLs where practical
+
 ### DOI Side-Margin Rendering
 
 - `preprint_doi`, `preprint_doi_label`
