@@ -91,6 +91,10 @@ Code-block rendering notes:
 
 - fenced code blocks are rendered with wrapped verbatim settings so long lines
   remain inside column width in `twocolumn: true` mode
+- language-tagged fenced blocks (for example `bash`, `text`) are supported by
+  default and compile through Pandoc highlighting scaffolding
+- plain fenced blocks without a language tag are also supported and compile
+  without requiring any author workaround
 - for readability, prefer author-inserted continuation points in long shell
   commands and long URLs where practical
 

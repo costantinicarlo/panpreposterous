@@ -93,6 +93,13 @@ jobs:
           chmod +x tests/check-verbatim-twocolumn.sh
           tests/check-verbatim-twocolumn.sh
 
+      - name: Run shaded and verbatim compatibility checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x tests/check-verbatim-shaded.sh
+          tests/check-verbatim-shaded.sh
+
   verify-build:
     if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
