@@ -251,7 +251,7 @@ After (conceptual):
 ### List generation behavior
 
 When supplementary content includes figures or tables (markdown, Pandoc AST, or
-LaTeX float blocks):
+LaTeX float blocks, including starred `figure*`/`table*`):
 
 - a "List of Supplementary Figures" subsection is generated when figures exist
 - a "List of Supplementary Tables" subsection is generated when tables exist

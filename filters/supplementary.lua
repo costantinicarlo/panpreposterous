@@ -42,12 +42,12 @@ end
 local function parse_raw_latex_for_floats(raw)
   local figs, tabs = {}, {}
   -- match environments (simple patterns; good enough for common cases)
-  for env, body in raw:gmatch("\\begin%s*{%s*(figure)%s*}([\\%w%W]-)\\end%s*{%s*figure%s*}") do
+  for body in raw:gmatch("\\begin%s*{%s*figure%*?%s*}([\\%w%W]-)\\end%s*{%s*figure%*?%s*}") do
     local cap = body:match("\\caption%s*{%s*(.-)%s*}") or ""
     local id = body:match("\\label%s*{%s*(.-)%s*}") or ""
     table.insert(figs, {caption = cap, id = id})
   end
-  for env, body in raw:gmatch("\\begin%s*{%s*(table)%s*}([\\%w%W]-)\\end%s*{%s*table%s*}") do
+  for body in raw:gmatch("\\begin%s*{%s*table%*?%s*}([\\%w%W]-)\\end%s*{%s*table%*?%s*}") do
     local cap = body:match("\\caption%s*{%s*(.-)%s*}") or ""
     local id = body:match("\\label%s*{%s*(.-)%s*}") or ""
     table.insert(tabs, {caption = cap, id = id})
@@ -108,7 +108,7 @@ local function with_pagebreaks_for_floats(blocks)
     local isFloat = (b.t == "Figure") or (b.t == "Table") or
       (b.t == "Para" and b.content and #b.content == 1 and b.content[1].t == "Image") or
       (b.t == "RawBlock" and b.format and b.format:match("[Ll]a[Tt][Ee][Xx]") and
-        (b.text:match("\\begin%s*{%s*figure%s*}") or b.text:match("\\begin%s*{%s*table%s*}") or b.text:match("\\captionof%s*{%s*figure%s*}") or b.text:match("\\captionof%s*{%s*table%s*}")))
+        (b.text:match("\\begin%s*{%s*figure%*?%s*}") or b.text:match("\\begin%s*{%s*table%*?%s*}") or b.text:match("\\captionof%s*{%s*figure%s*}") or b.text:match("\\captionof%s*{%s*table%s*}")))
     if isFloat then
       out:insert(pandoc.RawBlock("latex", "\\clearpage"))
       out:insert(b)

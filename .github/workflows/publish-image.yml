@@ -114,6 +114,13 @@ jobs:
           chmod +x tests/check-references-heading-contract.sh
           tests/check-references-heading-contract.sh
 
+      - name: Run supplementary list contract checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x tests/check-supplementary-list-contract.sh
+          tests/check-supplementary-list-contract.sh
+
   verify-build:
     if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
