@@ -57,6 +57,12 @@ flowchart LR
 ```
 ````
 
+Placement defaults:
+
+- standard Mermaid figure: `placement="!htbp"`
+- full-width Mermaid figure (`.fullwidth`, `.wide`, `.widetable`, `.starred`):
+  `placement="!t"`
+
 ## Two-Column Layout Rules
 
 When `twocolumn: true` is enabled:
@@ -76,6 +82,9 @@ sequenceDiagram
   B-->>A: Output PDF
 ```
 ````
+
+For full-width Markdown table placement semantics, see
+[docs/filters.md](filters.md) and [docs/inputs.md](inputs.md).
 
 ## Error Handling
 

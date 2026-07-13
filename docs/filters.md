@@ -31,6 +31,23 @@ neutral gray so SVG-to-PDF conversion preserves readability.
 In two-column manuscripts, `.fullwidth`, `.wide`, `.widetable`, and `.starred`
 Mermaid blocks render as `figure*` floats.
 
+### Float placement semantics
+
+The following defaults are implemented by filters and apply unless overridden by
+author attributes.
+
+| Construct | Placement attribute | Default | Emitted LaTeX float |
+| --- | --- | --- | --- |
+| Mermaid block | `placement` | `!htbp` | `figure` |
+| Mermaid block with `.fullwidth` / `.wide` / `.widetable` / `.starred` | `placement` | `!t` | `figure*` |
+| Markdown table wrapper with `.fullwidth` / `.widetable` / `.starred` | `placement` | `t` | `table*` |
+
+Practical guidance:
+
+- Use `!htbp` when a diagram should stay close to its first mention.
+- Use `t` or `!t` to bias placement to the top of a page in two-column output.
+- Use `tb` or `!tbp` for wide tables when top-only placement is too strict.
+
 ## Backmatter Filter Contracts
 
 The backmatter filter controls layout wrappers, TeX includes, and markdown table

@@ -155,6 +155,16 @@ In scope for validation:
 - non-empty PDF artifact
 - expected structural sections and filter transformations
 
+## Documentation Drift Checklist
+
+When changing float placement defaults or class handling in
+`filters/mermaid.lua` or `filters/backmatter.lua`, review and update all of:
+
+- `README.md` float placement quick reference
+- `docs/inputs.md` float placement matrix
+- `docs/diagrams.md` Mermaid placement defaults
+- `docs/filters.md` placement semantics table
+
 ## Host and Docker Prerequisites
 
 - Docker daemon is running and can mount local paths
