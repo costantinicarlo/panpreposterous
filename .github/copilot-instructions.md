@@ -7,6 +7,7 @@
 - Do not silently change data, scientific assumptions, statistical models, or file formats.
 - Before editing, inspect the relevant files and infer the existing conventions.
 - When uncertain, state the uncertainty rather than inventing details.
+- Use British English spelling and punctuation for all text, comments, and documentation.
 
 ## Output format for agentic work
 
