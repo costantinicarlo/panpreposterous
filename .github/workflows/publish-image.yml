@@ -149,6 +149,13 @@ jobs:
           chmod +x tests/check-wide-table-cell-overflow.sh
           tests/check-wide-table-cell-overflow.sh
 
+      - name: Run mixed-density wide table checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x tests/check-mixed-density-wide-table.sh
+          tests/check-mixed-density-wide-table.sh
+
       - name: Run hyperlink colour checks
         shell: bash
         run: |

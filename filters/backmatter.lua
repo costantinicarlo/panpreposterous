@@ -67,12 +67,12 @@ local function column_spec(align, width)
   local width_value = column_width_value(width)
   if width_value and width_value > 0 then
     if align == 'AlignRight' then
-      return string.format('>{\\RaggedLeft\\arraybackslash}p{%.3f\\linewidth}', width_value)
+      return string.format('>{\\RaggedLeft\\arraybackslash}p{%.4f\\linewidth}', width_value)
     end
     if align == 'AlignCenter' then
-      return string.format('>{\\Centering\\arraybackslash}p{%.3f\\linewidth}', width_value)
+      return string.format('>{\\Centering\\arraybackslash}p{%.4f\\linewidth}', width_value)
     end
-    return string.format('>{\\RaggedRight\\arraybackslash}p{%.3f\\linewidth}', width_value)
+    return string.format('>{\\RaggedRight\\arraybackslash}p{%.4f\\linewidth}', width_value)
   end
 
   if align == 'AlignRight' then return 'r' end
@@ -173,6 +173,130 @@ local function x_column_spec(align)
   return '>{\\RaggedRight\\arraybackslash}X'
 end
 
+local function cell_plain_text(cell)
+  local blocks = cell.contents or cell.content or {}
+  if #blocks == 0 then return '' end
+
+  local text = pandoc.write(pandoc.Pandoc(blocks), 'plain')
+  return text:gsub('%s+', ' '):gsub('^%s+', ''):gsub('%s+$', '')
+end
+
+local function cell_density(cell)
+  local text = cell_plain_text(cell)
+  local longest_token = 0
+
+  for token in text:gmatch('%S+') do
+    if #token > longest_token then longest_token = #token end
+  end
+
+  return (0.75 * #text) + (0.25 * longest_token)
+end
+
+local function column_density_weights(tbl, column_count)
+  local totals = {}
+  local maxima = {}
+  local counts = {}
+
+  local function accumulate_rows(rows)
+    for _, row in ipairs(rows or {}) do
+      local column_index = 1
+      for _, cell in ipairs(row.cells or {}) do
+        local column_span = tonumber(cell.col_span or cell.colspan) or 1
+        local density_share = cell_density(cell) / column_span
+
+        for offset = 0, column_span - 1 do
+          local index = column_index + offset
+          if index <= column_count then
+            totals[index] = (totals[index] or 0) + density_share
+            maxima[index] = math.max(maxima[index] or 0, density_share)
+            counts[index] = (counts[index] or 0) + 1
+          end
+        end
+
+        column_index = column_index + column_span
+      end
+    end
+  end
+
+  accumulate_rows(rows_from_head(tbl.head))
+  for _, body in ipairs(tbl.bodies or {}) do
+    accumulate_rows(rows_from_body(body))
+  end
+  accumulate_rows(rows_from_head(tbl.foot))
+
+  local weights = {}
+  for index = 1, column_count do
+    local average = (totals[index] or 0) / math.max(counts[index] or 0, 1)
+    local demand = (0.70 * average) + (0.30 * (maxima[index] or 0))
+    weights[index] = math.sqrt(math.max(demand, 4))
+  end
+
+  return weights
+end
+
+local function columns_have_uniform_widths(columns)
+  if #columns < 2 then return false end
+
+  local min_width = nil
+  local max_width = nil
+  for _, column in ipairs(columns) do
+    if not column.width then return false end
+    min_width = math.min(min_width or column.width, column.width)
+    max_width = math.max(max_width or column.width, column.width)
+  end
+
+  return (max_width - min_width) < 0.01
+end
+
+local function allocate_bounded_widths(weights, target_total)
+  local column_count = #weights
+  local minimum_width = math.min(0.16, target_total / (2 * column_count))
+  local maximum_width = math.min(0.70, (2.20 * target_total) / column_count)
+  local widths = {}
+  local active = {}
+  local remaining = target_total
+
+  for index = 1, column_count do
+    table.insert(active, index)
+  end
+
+  while #active > 0 do
+    local total_weight = 0
+    for _, index in ipairs(active) do
+      total_weight = total_weight + weights[index]
+    end
+
+    local constrained_position = nil
+    local constrained_width = nil
+    for position, index in ipairs(active) do
+      local candidate = remaining * weights[index] / total_weight
+      if candidate < minimum_width then
+        constrained_position = position
+        constrained_width = minimum_width
+        break
+      end
+      if candidate > maximum_width then
+        constrained_position = position
+        constrained_width = maximum_width
+        break
+      end
+    end
+
+    if not constrained_position then
+      for _, index in ipairs(active) do
+        widths[index] = remaining * weights[index] / total_weight
+      end
+      break
+    end
+
+    local index = table.remove(active, constrained_position)
+    widths[index] = constrained_width
+    remaining = remaining - constrained_width
+  end
+
+  return widths
+end
+
 local function build_tabularx_colspec(tbl)
   local columns = {}
   local specified_total = 0
@@ -192,6 +316,19 @@ local function build_tabularx_colspec(tbl)
 
   if #columns == 0 then
     return '>{\\RaggedRight\\arraybackslash}X'
+  end
+
+  local all_unspecified = unspecified_count == #columns
+  if all_unspecified or columns_have_uniform_widths(columns) then
+    local weights = column_density_weights(tbl, #columns)
+    local widths = allocate_bounded_widths(weights, 0.96)
+    local specs = {}
+
+    for index, column in ipairs(columns) do
+      table.insert(specs, column_spec(column.align, widths[index]))
+    end
+
+    return table.concat(specs, '@{}')
   end
 
   local target_total = 0.98

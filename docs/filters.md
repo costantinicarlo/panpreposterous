@@ -211,6 +211,11 @@ After (conceptual):
 - renders many-column tables with a `tabularx` width-constrained layout so
   unspecified columns wrap as `X` columns instead of overflowing beyond the
   right margin
+- replaces uniform automatic widths with bounded content-aware widths: visible
+  cell-text density determines relative allocation, while dampening and
+  minimum/maximum shares prevent either vanishingly narrow or dominant columns
+- preserves genuinely unequal widths supplied by Pandoc rather than overriding
+  an existing non-uniform column structure
 - keeps fixed-width `p{}` columns as ragged-right columns using
   `>{\RaggedRight\arraybackslash}p{...}` and scales oversized width sums to
   remain within full-width float bounds
