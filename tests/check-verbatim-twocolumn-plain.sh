@@ -36,8 +36,8 @@ if [[ ! -s "${tmp_root}/verbatim-twocolumn-plain.tex" ]]; then
   exit 1
 fi
 
-grep -Fq '\\RecustomVerbatimEnvironment{verbatim}{Verbatim}{%' "${tmp_root}/verbatim-twocolumn-plain.tex"
-grep -Fq '\\begin{verbatim}' "${tmp_root}/verbatim-twocolumn-plain.tex"
+grep -Fq '\RecustomVerbatimEnvironment{verbatim}{Verbatim}{%' "${tmp_root}/verbatim-twocolumn-plain.tex"
+grep -Fq '\begin{verbatim}' "${tmp_root}/verbatim-twocolumn-plain.tex"
 
 if grep -Fq 'Overfull \\hbox' "${render_log}"; then
   printf 'Two-column plain verbatim fixture failed: detected overfull hbox from plain fence rendering\n' >&2

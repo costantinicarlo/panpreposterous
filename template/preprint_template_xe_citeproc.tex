@@ -76,8 +76,14 @@ $endif$
   }%
 }{}
 \makeatother
+\makeatletter
+\newcommand{\PanVerbatimOnePtSmaller}{%
+  \fontsize{\dimexpr\f@size pt-1pt\relax}{\dimexpr\baselineskip-1pt\relax}\selectfont
+}
+\makeatother
 \AtBeginDocument{%
   \fvset{%
+    formatcom=\PanVerbatimOnePtSmaller,
     breaklines=true,
     breakanywhere=true,
     breaksymbolleft={},

@@ -105,6 +105,8 @@ Code-block rendering notes:
 - plain fenced blocks without a language tag are also supported and use the
   same wrapped verbatim safeguards in two-column mode, without requiring fake
   language annotation
+- fenced verbatim text defaults to 1pt smaller than body text to keep visual
+  hierarchy clear in dense technical sections
 - for readability, prefer author-inserted continuation points in long shell
   commands and long URLs where practical
 
