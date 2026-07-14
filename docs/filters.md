@@ -208,8 +208,12 @@ After (conceptual):
 
 - emits `\begin{table*}[tb]`
 - preserves the table caption and wrapper id as the LaTeX caption and label
-- renders fixed-width `p{}` columns as ragged-right columns using
-  `>{\raggedright\arraybackslash}p{...}`
+- renders many-column tables with a `tabularx` width-constrained layout so
+  unspecified columns wrap as `X` columns instead of overflowing beyond the
+  right margin
+- keeps fixed-width `p{}` columns as ragged-right columns using
+  `>{\raggedright\arraybackslash}p{...}` and scales oversized width sums to
+  remain within full-width float bounds
 - emits `\end{table*}`
 
 ### YAML override key

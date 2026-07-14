@@ -102,6 +102,71 @@ local function rows_from_body(body)
   return (body and body.body) or (body and body.rows) or {}
 end
 
+local function width_fraction_string(width_value)
+  return string.format('%.4f\\textwidth', width_value)
+end
+
+local function x_column_spec(align)
+  if align == 'AlignRight' then
+    return '>{\\raggedleft\\arraybackslash}X'
+  end
+  if align == 'AlignCenter' then
+    return '>{\\centering\\arraybackslash}X'
+  end
+  return '>{\\raggedright\\arraybackslash}X'
+end
+
+local function build_tabularx_colspec(tbl)
+  local columns = {}
+  local specified_total = 0
+  local unspecified_count = 0
+
+  for _, colspec in ipairs(tbl.colspecs or {}) do
+    local align = colspec[1]
+    local width_value = column_width_value(colspec[2])
+    if width_value and width_value > 0 then
+      table.insert(columns, { align = align, width = width_value })
+      specified_total = specified_total + width_value
+    else
+      table.insert(columns, { align = align, width = nil })
+      unspecified_count = unspecified_count + 1
+    end
+  end
+
+  if #columns == 0 then
+    return '>{\\raggedright\\arraybackslash}X'
+  end
+
+  local target_total = 0.98
+  local min_unspecified_share = 0.06
+  local available_for_specified = target_total - (unspecified_count * min_unspecified_share)
+  if available_for_specified < 0.30 then
+    available_for_specified = 0.30
+  end
+
+  local scale = 1
+  if unspecified_count == 0 then
+    if specified_total > target_total then
+      scale = target_total / specified_total
+    end
+  else
+    if specified_total > available_for_specified then
+      scale = available_for_specified / specified_total
+    end
+  end
+
+  local specs = {}
+  for _, column in ipairs(columns) do
+    if column.width then
+      table.insert(specs, '>{\\raggedright\\arraybackslash}p{' .. width_fraction_string(column.width * scale) .. '}')
+    else
+      table.insert(specs, x_column_spec(column.align))
+    end
+  end
+
+  return table.concat(specs, '')
+end
+
 local function render_fullwidth_table(tbl, wrapper_attr)
   local placement = 't'
   local attrs = {}
@@ -114,8 +179,7 @@ local function render_fullwidth_table(tbl, wrapper_attr)
   if attrs.placement and attrs.placement ~= '' then placement = attrs.placement end
 
   local id = table_identifier(tbl, wrapper_attr)
-  local colspec = table_colspecs(tbl)
-  if colspec == '' then colspec = 'l' end
+  local colspec = build_tabularx_colspec(tbl)
 
   local lines = {
     '\\begin{table*}[' .. placement .. ']',
@@ -130,7 +194,7 @@ local function render_fullwidth_table(tbl, wrapper_attr)
     table.insert(lines, '\\label{' .. id .. '}')
   end
 
-  table.insert(lines, '\\begin{tabular}{@{}' .. colspec .. '@{}}')
+  table.insert(lines, '\\begin{tabularx}{\\textwidth}{@{}' .. colspec .. '@{}}')
   table.insert(lines, '\\toprule')
 
   local head_rows = rows_from_head(tbl.head)
@@ -156,7 +220,7 @@ local function render_fullwidth_table(tbl, wrapper_attr)
   end
 
   table.insert(lines, '\\bottomrule')
-  table.insert(lines, '\\end{tabular}')
+  table.insert(lines, '\\end{tabularx}')
   table.insert(lines, '\\end{table*}')
 
   return { pandoc.RawBlock('latex', table.concat(lines, '\n')) }

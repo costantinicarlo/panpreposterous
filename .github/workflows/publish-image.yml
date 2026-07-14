@@ -121,6 +121,13 @@ jobs:
           chmod +x tests/check-supplementary-list-contract.sh
           tests/check-supplementary-list-contract.sh
 
+      - name: Run many-column wide table checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x tests/check-many-column-wide-table.sh
+          tests/check-many-column-wide-table.sh
+
   verify-build:
     if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
