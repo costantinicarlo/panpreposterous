@@ -135,6 +135,13 @@ jobs:
           chmod +x tests/check-many-column-wide-table.sh
           tests/check-many-column-wide-table.sh
 
+      - name: Run hyperlink colour checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x tests/check-hyperlink-colors.sh
+          tests/check-hyperlink-colors.sh
+
   verify-build:
     if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest

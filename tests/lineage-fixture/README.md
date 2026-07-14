@@ -18,6 +18,7 @@ scripts/verify-lineage-scaffold.sh.
 - ../check-references-heading-contract.sh: references-heading contract harness for refs anchor and manual heading behaviour
 - ../check-supplementary-list-contract.sh: supplementary list-generation harness for markdown, raw LaTeX starred floats, and Mermaid full-width output
 - ../check-many-column-wide-table.sh: regression harness for many-column full-width markdown tables staying within page width
+- ../check-hyperlink-colors.sh: regression harness for default hyperref text-link colours and border suppression
 - ../mermaid-types.md: diagram-type and wide-float fixture
 - ../mermaid-supplementary.md: supplementary compatibility fixture
 - ../mermaid-invalid.md: invalid Mermaid fallback fixture
@@ -37,6 +38,7 @@ scripts/verify-lineage-scaffold.sh.
 - ../supplementary-raw-starred-floats.md: fixture validating supplementary lists from raw LaTeX `figure*` and `table*` floats
 - ../supplementary-mermaid-starred.md: fixture validating supplementary list generation for `.fullwidth` Mermaid output inside supplementary content
 - ../many-column-wide-table.md: fixture validating overflow-resistant rendering for high-column-count full-width markdown tables
+- ../hyperlink-colors.md: fixture validating default hyperlink colour setup and cite/url/internal link rendering
 
 Fixture files are intentionally small so they can evolve with the repository
 without introducing heavy snapshot maintenance.
