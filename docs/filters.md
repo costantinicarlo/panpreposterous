@@ -216,6 +216,8 @@ After (conceptual):
   remain within full-width float bounds
 - applies `ragged2e` paragraph column directives so dense cell text can wrap
   and hyphenate in narrow wide-table columns instead of pushing past margins
+- inserts soft-break opportunities inside long inline-code (`\texttt{...}`)
+  table-cell tokens so unbroken technical strings can wrap in narrow columns
 - emits `\end{table*}`
 
 ### YAML override key

@@ -39,6 +39,8 @@ fi
 grep -Fq '\begin{table*}[tb]' "${tmp_root}/wide-table-cell-overflow.tex"
 grep -Fq '\begin{tabularx}{\textwidth}{@{}' "${tmp_root}/wide-table-cell-overflow.tex"
 grep -Fq '>{\RaggedRight\arraybackslash}p{' "${tmp_root}/wide-table-cell-overflow.tex"
+grep -Fq '\texttt{SUPERCALIFRAGIL' "${tmp_root}/wide-table-cell-overflow.tex"
+grep -Fq '\hspace{0pt}' "${tmp_root}/wide-table-cell-overflow.tex"
 grep -Fq '\end{tabularx}' "${tmp_root}/wide-table-cell-overflow.tex"
 grep -Fq '\end{table*}' "${tmp_root}/wide-table-cell-overflow.tex"
 

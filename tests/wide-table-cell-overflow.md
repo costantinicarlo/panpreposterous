@@ -10,6 +10,7 @@ Text before the wide-table cell overflow regression fixture.
 | --- | --- | --- |
 | A1 | This column carries substantially denser wording with multiple long scientific descriptors including electrophysiological, thermodynamically, and counterrevolutionaries so wrapping and hyphenation are required to keep text inside the table boundary. | brief |
 | A2 | Another dense sentence includes internationalisation, neuropsychological, and incomprehensibilities to exercise narrow-cell wrapping under two-column full-width rendering. | short |
+| A3 | `SUPERCALIFRAGILISTICEXPIALIDOCIOUS_UNBREAKABLE_INLINE_CODE_TOKEN_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ` | inline-code stress |
 
 Table: **Wide-table cell overflow regression.** Dense table-cell text should stay within page margins in full-width mode.
 :::

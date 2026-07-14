@@ -88,8 +88,59 @@ local function table_colspecs(tbl)
   return table.concat(specs, '')
 end
 
+local function softbreak_texttt_content(content)
+  local chunk_size = 16
+  local out = {}
+  local run_length = 0
+  local i = 1
+
+  while i <= #content do
+    local ch = content:sub(i, i)
+
+    -- Keep escaped two-char sequences (for example \_) intact.
+    if ch == '\\' and i < #content then
+      local esc = content:sub(i, i + 1)
+      table.insert(out, esc)
+      if esc == '\\_' then
+        table.insert(out, '\\hspace{0pt}')
+        run_length = 0
+      else
+        run_length = run_length + 2
+      end
+      i = i + 2
+    else
+      table.insert(out, ch)
+
+      if ch:match('[/%._:%-]') then
+        table.insert(out, '\\hspace{0pt}')
+        run_length = 0
+      else
+        run_length = run_length + 1
+        if run_length >= chunk_size then
+          table.insert(out, '\\hspace{0pt}')
+          run_length = 0
+        end
+      end
+
+      i = i + 1
+    end
+  end
+
+  return table.concat(out)
+end
+
+local function soften_table_cell_latex(latex)
+  return (latex:gsub('\\texttt{([^{}]+)}', function(content)
+    if #content < 32 then
+      return '\\texttt{' .. content .. '}'
+    end
+    return '\\texttt{' .. softbreak_texttt_content(content) .. '}'
+  end))
+end
+
 local function cell_latex(cell)
-  return latex_for_blocks(cell.contents or cell.content or {})
+  local latex = latex_for_blocks(cell.contents or cell.content or {})
+  return soften_table_cell_latex(latex)
 end
 
 local function row_latex(row)
