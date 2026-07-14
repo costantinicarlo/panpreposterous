@@ -142,6 +142,13 @@ jobs:
           chmod +x tests/check-many-column-wide-table.sh
           tests/check-many-column-wide-table.sh
 
+      - name: Run wide-table cell overflow checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x tests/check-wide-table-cell-overflow.sh
+          tests/check-wide-table-cell-overflow.sh
+
       - name: Run hyperlink colour checks
         shell: bash
         run: |

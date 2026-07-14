@@ -212,8 +212,10 @@ After (conceptual):
   unspecified columns wrap as `X` columns instead of overflowing beyond the
   right margin
 - keeps fixed-width `p{}` columns as ragged-right columns using
-  `>{\raggedright\arraybackslash}p{...}` and scales oversized width sums to
+  `>{\RaggedRight\arraybackslash}p{...}` and scales oversized width sums to
   remain within full-width float bounds
+- applies `ragged2e` paragraph column directives so dense cell text can wrap
+  and hyphenate in narrow wide-table columns instead of pushing past margins
 - emits `\end{table*}`
 
 ### YAML override key

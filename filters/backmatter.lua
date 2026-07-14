@@ -66,7 +66,13 @@ end
 local function column_spec(align, width)
   local width_value = column_width_value(width)
   if width_value and width_value > 0 then
-    return string.format('>{\\raggedright\\arraybackslash}p{%.3f\\linewidth}', width_value)
+    if align == 'AlignRight' then
+      return string.format('>{\\RaggedLeft\\arraybackslash}p{%.3f\\linewidth}', width_value)
+    end
+    if align == 'AlignCenter' then
+      return string.format('>{\\Centering\\arraybackslash}p{%.3f\\linewidth}', width_value)
+    end
+    return string.format('>{\\RaggedRight\\arraybackslash}p{%.3f\\linewidth}', width_value)
   end
 
   if align == 'AlignRight' then return 'r' end
@@ -108,12 +114,12 @@ end
 
 local function x_column_spec(align)
   if align == 'AlignRight' then
-    return '>{\\raggedleft\\arraybackslash}X'
+    return '>{\\RaggedLeft\\arraybackslash}X'
   end
   if align == 'AlignCenter' then
-    return '>{\\centering\\arraybackslash}X'
+    return '>{\\Centering\\arraybackslash}X'
   end
-  return '>{\\raggedright\\arraybackslash}X'
+  return '>{\\RaggedRight\\arraybackslash}X'
 end
 
 local function build_tabularx_colspec(tbl)
@@ -134,7 +140,7 @@ local function build_tabularx_colspec(tbl)
   end
 
   if #columns == 0 then
-    return '>{\\raggedright\\arraybackslash}X'
+    return '>{\\RaggedRight\\arraybackslash}X'
   end
 
   local target_total = 0.98
@@ -158,7 +164,7 @@ local function build_tabularx_colspec(tbl)
   local specs = {}
   for _, column in ipairs(columns) do
     if column.width then
-      table.insert(specs, '>{\\raggedright\\arraybackslash}p{' .. width_fraction_string(column.width * scale) .. '}')
+      table.insert(specs, column_spec(column.align, column.width * scale))
     else
       table.insert(specs, x_column_spec(column.align))
     end

@@ -16,7 +16,7 @@ pandoc "${REPO_ROOT}/tests/many-column-wide-table.md" \
 
 grep -Fq '\begin{table*}[tb]' "${tmp_latex}"
 grep -Fq '\begin{tabularx}{\textwidth}{@{}' "${tmp_latex}"
-grep -Fq '>{\raggedright\arraybackslash}p{' "${tmp_latex}"
+grep -Fq '>{\RaggedRight\arraybackslash}p{' "${tmp_latex}"
 grep -Fq '\caption{\textbf{Many-column wide table regression.} Full-width table should stay within page width in two-column output.}' "${tmp_latex}"
 grep -Fq '\label{tbl:many-column-wide}' "${tmp_latex}"
 grep -Fq '\end{tabularx}' "${tmp_latex}"
