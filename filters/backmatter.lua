@@ -85,7 +85,7 @@ local function table_colspecs(tbl)
   for _, colspec in ipairs(tbl.colspecs or {}) do
     table.insert(specs, column_spec(colspec[1], colspec[2]))
   end
-  return table.concat(specs, '')
+  return table.concat(specs, '@{}')
 end
 
 local function softbreak_texttt_content(content)
@@ -221,7 +221,7 @@ local function build_tabularx_colspec(tbl)
     end
   end
 
-  return table.concat(specs, '')
+  return table.concat(specs, '@{}')
 end
 
 local function render_fullwidth_table(tbl, wrapper_attr)

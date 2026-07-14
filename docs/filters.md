@@ -214,6 +214,9 @@ After (conceptual):
 - keeps fixed-width `p{}` columns as ragged-right columns using
   `>{\RaggedRight\arraybackslash}p{...}` and scales oversized width sums to
   remain within full-width float bounds
+- suppresses implicit intercolumn glue in full-width `tabularx` specs (`@{}`
+  separators) so hidden column padding does not push dense rightmost cells past
+  the page margin
 - applies `ragged2e` paragraph column directives so dense cell text can wrap
   and hyphenate in narrow wide-table columns instead of pushing past margins
 - inserts soft-break opportunities inside long inline-code (`\texttt{...}`)
