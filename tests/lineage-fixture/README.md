@@ -13,6 +13,7 @@ scripts/verify-lineage-scaffold.sh.
 - ../check-font-compatibility.sh: Unicode and font fallback validation harness
 - ../check-verbatim-twocolumn.sh: two-column verbatim wrapping validation harness
 - ../check-verbatim-shaded.sh: shaded/highlighting compatibility harness for plain and language-tagged fences
+- ../check-verbatim-twocolumn-plain.sh: two-column plain-fence wrapping harness for untagged verbatim blocks
 - ../check-citation-input-modes.sh: citation input parity harness for flag-based and metadata-first bibliography/CSL configuration
 - ../check-references-heading-contract.sh: references-heading contract harness for refs anchor and manual heading behaviour
 - ../check-supplementary-list-contract.sh: supplementary list-generation harness for markdown, raw LaTeX starred floats, and Mermaid full-width output
@@ -27,6 +28,7 @@ scripts/verify-lineage-scaffold.sh.
 - ../font-unicode-missingfont.md: missing-font fallback fixture
 - ../verbatim-onecolumn.md: one-column fixture with language-tagged and plain fences
 - ../verbatim-twocolumn.md: two-column long-line verbatim fixture
+- ../verbatim-twocolumn-plain.md: two-column fixture validating long untagged fenced blocks
 - ../metadata-citation-inputs.md: metadata-first citation fixture used to validate bibliography/CSL YAML inputs
 - ../references-metadata-only.md: fixture validating refs anchor insertion without a manual heading
 - ../references-manual-only.md: fixture validating manual references heading with refs anchor

@@ -102,8 +102,9 @@ Code-block rendering notes:
   remain inside column width in `twocolumn: true` mode
 - language-tagged fenced blocks (for example `bash`, `text`) are supported by
   default and compile through Pandoc highlighting scaffolding
-- plain fenced blocks without a language tag are also supported and compile
-  without requiring any author workaround
+- plain fenced blocks without a language tag are also supported and use the
+  same wrapped verbatim safeguards in two-column mode, without requiring fake
+  language annotation
 - for readability, prefer author-inserted continuation points in long shell
   commands and long URLs where practical
 
