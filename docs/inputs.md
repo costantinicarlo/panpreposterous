@@ -112,7 +112,7 @@ Hyperlink styling defaults:
 
 - links render as coloured text (`colorlinks=true`) instead of border boxes
 - default two-colour scheme follows the preferred `hyperref` approach discussed
-  by szabolcs:
+  by [szabolcs]( https://tex.stackexchange.com/questions/525261/better-default-colors-for-hyperref-links):
   - internal/citation/url links: `NavyBlue`
   - file/menu/run links: `Red`
 - border rectangles are disabled by default (`pdfborder={0 0 0}`)
