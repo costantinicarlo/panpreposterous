@@ -70,7 +70,8 @@ local function collect_items(blocks)
   local function caption_to_text(c) return stringify(c or {}) end
 
   local function walk(el)
-    if type(el) ~= 'table' then return end
+    local kind = type(el)
+    if kind ~= 'table' and kind ~= 'userdata' then return end
     if el.t == "Figure" then
       local cap = ""
       if el.caption then

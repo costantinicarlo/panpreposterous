@@ -28,8 +28,8 @@ docker run --rm -v "${REPO_ROOT}:/repo" -w /repo "${IMAGE}" \
   --lua-filter=filters/supplementary.lua \
   >"${md_latex}"
 
-grep -Fq '\\subsection*{List of Supplementary Figures}' "${md_latex}"
-grep -Fq '\\subsection*{List of Supplementary Tables}' "${md_latex}"
+grep -Fq '\subsection*{List of Supplementary Figures}' "${md_latex}"
+grep -Fq '\subsection*{List of Supplementary Tables}' "${md_latex}"
 grep -Fq 'Supplementary Figure S1.' "${md_latex}"
 grep -Fq 'Supplementary Table S1.' "${md_latex}"
 
@@ -39,10 +39,10 @@ docker run --rm -v "${REPO_ROOT}:/repo" -w /repo "${IMAGE}" \
   --lua-filter=filters/supplementary.lua \
   >"${raw_latex}"
 
-grep -Fq '\\subsection*{List of Supplementary Figures}' "${raw_latex}"
-grep -Fq '\\subsection*{List of Supplementary Tables}' "${raw_latex}"
-grep -Fq '\\ref{fig:s-raw-star}' "${raw_latex}"
-grep -Fq '\\ref{tbl:s-raw-star}' "${raw_latex}"
+grep -Fq '\subsection*{List of Supplementary Figures}' "${raw_latex}"
+grep -Fq '\subsection*{List of Supplementary Tables}' "${raw_latex}"
+grep -Fq '\ref{fig:s-raw-star}' "${raw_latex}"
+grep -Fq '\ref{tbl:s-raw-star}' "${raw_latex}"
 
 # 3) Mermaid .fullwidth in supplementary should be counted as a starred figure.
 docker run --rm -v "${REPO_ROOT}:/repo" -w /repo "${IMAGE}" \
@@ -51,8 +51,8 @@ docker run --rm -v "${REPO_ROOT}:/repo" -w /repo "${IMAGE}" \
   --lua-filter=filters/supplementary.lua \
   >"${mermaid_latex}"
 
-grep -Fq '\\subsection*{List of Supplementary Figures}' "${mermaid_latex}"
-grep -Fq 'Supplementary Figure S1. Starred Mermaid supplementary figure.' "${mermaid_latex}"
-grep -Fq '\\ref{fig:s-mermaid-star}' "${mermaid_latex}"
+grep -Fq '\subsection*{List of Supplementary Figures}' "${mermaid_latex}"
+grep -Fq 'Starred Mermaid supplementary figure.' "${mermaid_latex}"
+grep -Fq '\ref{fig:s-mermaid-star}' "${mermaid_latex}"
 
 printf 'Supplementary list contract checks passed.\n'
