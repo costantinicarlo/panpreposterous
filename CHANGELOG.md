@@ -17,6 +17,49 @@ earlier published image tags predate it and are covered by the lineage record.
 
 No entries yet.
 
+## [1.4.3] - 2026-07-14
+
+Patch release focused on two-column wide-table robustness and layout quality
+for dense, real-world manuscripts.
+
+### Added
+
+- Wide-table right-edge overflow regression harness and fixture:
+  `tests/check-wide-table-cell-overflow.sh` and
+  `tests/wide-table-cell-overflow.md`.
+- Mixed-density wide-table allocation regression harness and fixture:
+  `tests/check-mixed-density-wide-table.sh` and
+  `tests/mixed-density-wide-table.md`.
+- Hyperlink styling regression harness and fixture:
+  `tests/check-hyperlink-colors.sh` and `tests/hyperlink-colors.md`.
+- Verbatim font-size regression harness and fixture:
+  `tests/check-verbatim-fontsize.sh` and `tests/verbatim-fontsize.md`.
+
+### Fixed
+
+- Fixed persistent rightmost-cell overflow in dense two-column full-width
+  tables by hardening `tabularx` emission with ragged paragraph handling and
+  safer inline-code wrapping opportunities.
+- Fixed hidden intercolumn overflow in wide tables by removing extra glue in
+  generated `tabularx` column specifications.
+- Fixed long inline-code token handling inside table cells, reducing overflow
+  risk for dense technical content.
+- Fixed fenced verbatim typography to render 1pt smaller than body text,
+  improving visual hierarchy in dense technical manuscripts.
+
+### Changed
+
+- Wide-table auto-width allocation is now content-aware for uniform or
+  unspecified Pandoc widths, using bounded density-based weights to improve
+  balance between sparse and dense columns while preserving the total width
+  budget.
+- Existing non-uniform Pandoc column widths are preserved as authored.
+- Hyperlink defaults now use colour text links with no border rectangles,
+  adopting a clearer two-colour `hyperref` scheme for internal/citation/URL
+  links versus file/menu/run links.
+- CI release verification now includes the new wide-table overflow and
+  mixed-density allocation checks in the publish pipeline.
+
 ## [1.4.2] - 2026-07-13
 
 Patch release focused on fixture-driven regression coverage and contract
