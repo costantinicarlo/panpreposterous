@@ -38,15 +38,24 @@ if [[ ! -s "${tmp_root}/hyperlink-colors.tex" ]]; then
   exit 1
 fi
 
-grep -Fq '\\hypersetup{' "${tmp_root}/hyperlink-colors.tex"
-grep -Fq 'colorlinks=true' "${tmp_root}/hyperlink-colors.tex"
-grep -Fq 'linkcolor=NavyBlue' "${tmp_root}/hyperlink-colors.tex"
-grep -Fq 'citecolor=NavyBlue' "${tmp_root}/hyperlink-colors.tex"
-grep -Fq 'urlcolor=NavyBlue' "${tmp_root}/hyperlink-colors.tex"
-grep -Fq 'filecolor=Red' "${tmp_root}/hyperlink-colors.tex"
-grep -Fq 'menucolor=Red' "${tmp_root}/hyperlink-colors.tex"
-grep -Fq 'runcolor=Red' "${tmp_root}/hyperlink-colors.tex"
-grep -Fq 'pdfborder={0 0 0}' "${tmp_root}/hyperlink-colors.tex"
+assert_tex_contains() {
+  local pattern="$1"
+
+  if ! grep -Fq "${pattern}" "${tmp_root}/hyperlink-colors.tex"; then
+    printf 'Hyperlink fixture failed: expected TeX pattern %s\n' "${pattern}" >&2
+    exit 1
+  fi
+}
+
+assert_tex_contains '\hypersetup{'
+assert_tex_contains 'colorlinks=true'
+assert_tex_contains 'linkcolor=NavyBlue'
+assert_tex_contains 'citecolor=NavyBlue'
+assert_tex_contains 'urlcolor=NavyBlue'
+assert_tex_contains 'filecolor=Red'
+assert_tex_contains 'menucolor=Red'
+assert_tex_contains 'runcolor=Red'
+assert_tex_contains 'pdfborder={0 0 0}'
 
 if grep -Fq '[@Smith2024]' "${tmp_root}/hyperlink-colors.tex"; then
   printf 'Hyperlink fixture failed: citation key was not resolved\n' >&2
