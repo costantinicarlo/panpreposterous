@@ -89,6 +89,9 @@ COPY filters ${PANPREPOSTEROUS_FILTERS_DIR}
 COPY bin/panpreposterous /usr/local/bin/panpreposterous
 RUN chmod +x /usr/local/bin/panpreposterous
 
+# Validate the wrapper is present and executable during image build.
+RUN /bin/bash -lc 'set -euo pipefail; command -v panpreposterous; /usr/local/bin/panpreposterous --help >/dev/null'
+
 # Let TeX search the template dir (// = search subdirs; trailing : keeps defaults)
 ENV TEXINPUTS=${PANPREPOSTEROUS_TEMPLATE_DIR}//:
 
