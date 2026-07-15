@@ -63,6 +63,14 @@ RUN /bin/bash -lc 'set -euo pipefail; \
     test -n "$tinytex_bin"; \
     ln -sf "$tinytex_bin"/* /usr/local/bin/'
 
+# Ensure TinyTeX binaries are always resolvable and fail fast if toolchain is missing.
+ENV PATH=/root/.TinyTeX/bin/x86_64-linux:/root/.TinyTeX/bin/aarch64-linux:${PATH}
+RUN /bin/bash -lc 'set -euo pipefail; \
+    command -v pandoc; \
+    command -v tlmgr; \
+    command -v fmtutil-sys; \
+    command -v xelatex'
+
 # Update tlmgr itself before installing packages (required for TinyTeX compatibility)
 RUN tlmgr update --self
 
