@@ -68,98 +68,98 @@ jobs:
       - name: Run Mermaid Phase 5 checks
         shell: bash
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           chmod +x tests/check-mermaid-phase5.sh
           tests/check-mermaid-phase5.sh
 
       - name: Run intermediate TeX checks
         shell: bash
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           chmod +x tests/check-intermediate-tex.sh
           tests/check-intermediate-tex.sh
 
       - name: Run font compatibility checks
         shell: bash
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           chmod +x tests/check-font-compatibility.sh
           tests/check-font-compatibility.sh
 
       - name: Run two-column verbatim checks
         shell: bash
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           chmod +x tests/check-verbatim-twocolumn.sh
           tests/check-verbatim-twocolumn.sh
 
       - name: Run shaded and verbatim compatibility checks
         shell: bash
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           chmod +x tests/check-verbatim-shaded.sh
           tests/check-verbatim-shaded.sh
 
       - name: Run two-column plain verbatim checks
         shell: bash
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           chmod +x tests/check-verbatim-twocolumn-plain.sh
           tests/check-verbatim-twocolumn-plain.sh
 
       - name: Run verbatim fontsize checks
         shell: bash
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           chmod +x tests/check-verbatim-fontsize.sh
           tests/check-verbatim-fontsize.sh
 
       - name: Run citation input mode checks
         shell: bash
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           chmod +x tests/check-citation-input-modes.sh
           tests/check-citation-input-modes.sh
 
       - name: Run references heading contract checks
         shell: bash
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           chmod +x tests/check-references-heading-contract.sh
           tests/check-references-heading-contract.sh
 
       - name: Run supplementary list contract checks
         shell: bash
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           chmod +x tests/check-supplementary-list-contract.sh
           tests/check-supplementary-list-contract.sh
 
       - name: Run many-column wide table checks
         shell: bash
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           chmod +x tests/check-many-column-wide-table.sh
           tests/check-many-column-wide-table.sh
 
       - name: Run wide-table cell overflow checks
         shell: bash
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           chmod +x tests/check-wide-table-cell-overflow.sh
           tests/check-wide-table-cell-overflow.sh
 
       - name: Run mixed-density wide table checks
         shell: bash
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           chmod +x tests/check-mixed-density-wide-table.sh
           tests/check-mixed-density-wide-table.sh
 
       - name: Run hyperlink colour checks
         shell: bash
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           chmod +x tests/check-hyperlink-colors.sh
           tests/check-hyperlink-colors.sh
 
